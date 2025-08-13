@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 資料庫
+  postgres:
+    image: postgres:15-alpine
+    container_name: xiongichat_db
+    environment:
+      POSTGRES_USER: xiongichat
+      POSTGRES_PASSWORD: xiongichat123
+      POSTGRES_DB: xiongichat
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xiongichat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - xiongichat_network
+
+  # Redis 快取
+  redis:
+    image: redis:7-alpine
+    container_name: xiongichat_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - xiongichat_network
+
+  # 主應用程式
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xiongichat_app
+    env_file:
+      - .env
+    environment:
+      # 覆寫資料庫連線（使用容器名稱）
+      DATABASE_URL: postgresql+asyncpg://xiongichat:xiongichat123@postgres:5432/xiongichat
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # 開發模式：掛載原始碼以便即時更新
+      - ./app:/app/app:ro
+      # 掛載 .env 檔案
+      - ./.env:/app/.env:ro
+    networks:
+      - xiongichat_network
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+networks:
+  xiongichat_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
