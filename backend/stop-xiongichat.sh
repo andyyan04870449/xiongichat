@@ -145,3 +145,4 @@ echo ""
 echo -e "${CYAN}重新啟動服務：${NC}"
 echo -e "   啟動雄i聊: ${YELLOW}./start.sh${NC}"
 echo -e "   啟動 ngrok: ${YELLOW}./start-ngrok-xiongichat.sh${NC}"
+

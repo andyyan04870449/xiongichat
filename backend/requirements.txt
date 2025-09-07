@@ -22,6 +22,11 @@ python-multipart==0.0.6
 httpx==0.25.2
 redis==5.0.1
 uuid==1.30
+Pillow>=10.0.0
+
+# Vector Database
+pgvector==0.3.6
+numpy>=1.24.0
 
 # Development
 pytest==7.4.3

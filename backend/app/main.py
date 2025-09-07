@@ -2,9 +2,14 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import logging
 import sys
+from dotenv import load_dotenv
+
+# 載入環境變數
+load_dotenv()
 
 from app.config import settings
 from app.database import init_db, close_db
@@ -60,6 +65,9 @@ app.add_middleware(
 
 # 註冊路由
 app.include_router(api_router, prefix=settings.api_prefix)
+
+# 靜態檔案服務
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")

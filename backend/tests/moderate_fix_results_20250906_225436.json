@@ -1,0 +1,30 @@
+[
+  {
+    "test_id": "self_intro",
+    "passed": true,
+    "reply": "嗨，Andy！最近生活怎麼樣？",
+    "issues": []
+  },
+  {
+    "test_id": "stress",
+    "passed": true,
+    "reply": "有什麼特別原因讓你感到壓力嗎？",
+    "issues": []
+  },
+  {
+    "test_id": "mood",
+    "passed": false,
+    "reply": "發生什麼事了嗎？",
+    "issues": [
+      "⚠️ 未包含預期關鍵詞"
+    ]
+  },
+  {
+    "test_id": "sleep",
+    "passed": false,
+    "reply": "最近有什麼事情讓你特別煩心嗎？",
+    "issues": [
+      "⚠️ 未包含預期關鍵詞"
+    ]
+  }
+]

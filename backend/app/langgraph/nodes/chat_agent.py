@@ -34,6 +34,12 @@ class ChatAgentNode:
                 timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             )
             
+            # 如果有檢索到知識，加入到系統提示中
+            if state.get("retrieved_knowledge"):
+                knowledge_context = self._format_knowledge_context(state["retrieved_knowledge"])
+                if knowledge_context:
+                    system_prompt += f"\n\n【參考資訊】\n{knowledge_context}\n請根據以上資訊回答，但回應仍需符合角色設定和字數限制。"
+            
             # 構建訊息列表
             messages = [SystemMessage(content=system_prompt)]
             
@@ -75,3 +81,26 @@ class ChatAgentNode:
             state["reply"] = "抱歉，我遇到了一些技術問題。請稍後再試。"
         
         return state
+    
+    def _format_knowledge_context(self, knowledge_items: List[Dict[str, Any]]) -> str:
+        """格式化知識庫檢索結果為上下文"""
+        if not knowledge_items:
+            return ""
+        
+        # 只取最相關的前 2 筆，避免上下文過長
+        top_items = knowledge_items[:2]
+        
+        context_parts = []
+        for idx, item in enumerate(top_items, 1):
+            # 精簡內容，只保留重點資訊
+            content = item.get("content", "")
+            if len(content) > 150:
+                content = content[:150] + "..."
+            
+            title = item.get("title", "")
+            if title:
+                context_parts.append(f"{idx}. {title}: {content}")
+            else:
+                context_parts.append(f"{idx}. {content}")
+        
+        return "\n".join(context_parts)

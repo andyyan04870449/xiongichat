@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雄i聊 - 知識管理系統</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-robot"></i>
+                    雄i聊 - 知識管理系統
+                </h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <input type="text" id="globalSearch" placeholder="全域搜尋..." />
+                        <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="user-menu">
+                        <span>管理員</span>
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <ul class="nav-menu">
+                    <li class="nav-item active" data-page="knowledge">
+                        <i class="fas fa-book"></i>
+                        <span>知識庫</span>
+                    </li>
+                    <li class="nav-item" data-page="contacts">
+                        <i class="fas fa-address-book"></i>
+                        <span>聯絡管理</span>
+                    </li>
+                    <li class="nav-item" data-page="history">
+                        <i class="fas fa-history"></i>
+                        <span>上傳歷史</span>
+                    </li>
+                    <li class="nav-item" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>系統設定</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content">
+                <!-- Knowledge Page (統一知識庫管理) -->
+                <div id="knowledgePage" class="page active">
+                    <div class="page-header">
+                        <h2>知識庫管理</h2>
+                        <p>檔案資料與權威資訊的統一管理平台</p>
+                    </div>
+
+                    <!-- 頂部工具欄 -->
+                    <div class="knowledge-toolbar">
+                        <div class="search-section">
+                            <input type="text" id="knowledgeSearch" placeholder="搜尋檔案或權威資料..." />
+                            <button class="search-btn" onclick="knowledgeManager.search()">
+                                <i class="fas fa-search"></i> 搜尋
+                            </button>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="upload-btn" onclick="knowledgeManager.openUploadModal()">
+                                <i class="fas fa-plus"></i> 上傳檔案
+                            </button>
+                            <button class="add-authority-btn" onclick="openAddContactModal()">
+                                <i class="fas fa-shield-alt"></i> 新增權威資料
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 統計卡片 -->
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <i class="fas fa-file"></i>
+                            <div class="stat-info">
+                                <div class="stat-number" id="totalFiles">0</div>
+                                <div class="stat-label">總檔案數</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-file-pdf"></i>
+                            <div class="stat-info">
+                                <div class="stat-number" id="pdfCount">0</div>
+                                <div class="stat-label">PDF文件</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-image"></i>
+                            <div class="stat-info">
+                                <div class="stat-number" id="imageCount">0</div>
+                                <div class="stat-label">圖片檔案</div>
+                            </div>
+                        </div>
+                        <div class="stat-card authority">
+                            <i class="fas fa-shield-alt"></i>
+                            <div class="stat-info">
+                                <div class="stat-number" id="authorityCount">0</div>
+                                <div class="stat-label">權威資料</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 權威資料區（置頂重要） -->
+                    <div class="authority-section">
+                        <h3><i class="fas fa-exclamation-triangle"></i> 權威資料（重要資訊）</h3>
+                        <div class="authority-list" id="authorityList">
+                            <!-- 權威資料項目將在這裡動態載入 -->
+                        </div>
+                    </div>
+
+                    <!-- 檔案展示區 -->
+                    <div class="files-section">
+                        <div class="section-header">
+                            <h3>檔案庫</h3>
+                            <div class="view-controls">
+                                <select id="fileFilter" onchange="knowledgeManager.filterFiles()">
+                                    <option value="all">所有檔案</option>
+                                    <option value="pdf">PDF文件</option>
+                                    <option value="image">圖片</option>
+                                    <option value="recent">最近7天</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="files-list" id="filesList">
+                            <!-- 檔案列表將在這裡動態載入 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Page (隱藏，改為Modal) -->
+                <div id="uploadPage" class="page">
+                    <div class="page-header">
+                        <h2>上傳資料</h2>
+                        <p>上傳權威資料或文章內容到知識庫</p>
+                    </div>
+
+                    <div class="upload-container">
+                        <!-- Authority Data Upload -->
+                        <div class="upload-card">
+                            <div class="card-header">
+                                <i class="fas fa-shield-alt"></i>
+                                <h3>權威資料</h3>
+                                <span class="badge authority">權威</span>
+                            </div>
+                            
+                            <div class="upload-tabs">
+                                <button class="tab-btn active" data-tab="media">媒體檔案</button>
+                                <button class="tab-btn" data-tab="contacts">通訊錄</button>
+                            </div>
+
+                            <!-- Media Upload -->
+                            <div id="mediaTab" class="tab-content active">
+                                <div class="upload-area" id="mediaUploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>拖放圖片檔案到這裡，或點擊選擇檔案</p>
+                                    <input type="file" id="mediaFile" accept="image/*,video/*,audio/*" multiple>
+                                    <button class="upload-btn">選擇檔案</button>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="mediaTags">標籤 (用逗號分隔)</label>
+                                    <input type="text" id="mediaTags" placeholder="例如: 活動照片, 宣傳, 2024">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="mediaDescription">備註</label>
+                                    <textarea id="mediaDescription" placeholder="描述這個媒體檔案的內容..."></textarea>
+                                </div>
+                                
+                                <button class="submit-btn" id="uploadMediaBtn">
+                                    <i class="fas fa-upload"></i>
+                                    上傳媒體
+                                </button>
+                            </div>
+
+                            <!-- Contacts Upload -->
+                            <div id="contactsTab" class="tab-content">
+                                <div class="upload-area" id="contactsUploadArea">
+                                    <i class="fas fa-file-csv"></i>
+                                    <p>拖放 CSV/Excel 檔案到這裡，或點擊選擇檔案</p>
+                                    <input type="file" id="contactsFile" accept=".csv,.xlsx,.json">
+                                    <button class="upload-btn">選擇檔案</button>
+                                </div>
+                                
+                                <div class="field-mapping" id="fieldMapping" style="display: none;">
+                                    <h4>欄位映射</h4>
+                                    <div class="mapping-grid">
+                                        <div class="mapping-item">
+                                            <label>機構名稱 *</label>
+                                            <select class="field-select" data-field="organization">
+                                                <option value="">選擇欄位...</option>
+                                            </select>
+                                        </div>
+                                        <div class="mapping-item">
+                                            <label>電話</label>
+                                            <select class="field-select" data-field="phone">
+                                                <option value="">選擇欄位...</option>
+                                            </select>
+                                        </div>
+                                        <div class="mapping-item">
+                                            <label>Email</label>
+                                            <select class="field-select" data-field="email">
+                                                <option value="">選擇欄位...</option>
+                                            </select>
+                                        </div>
+                                        <div class="mapping-item">
+                                            <label>標籤</label>
+                                            <select class="field-select" data-field="tags">
+                                                <option value="">選擇欄位...</option>
+                                            </select>
+                                        </div>
+                                        <div class="mapping-item">
+                                            <label>備註</label>
+                                            <select class="field-select" data-field="notes">
+                                                <option value="">選擇欄位...</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <p style="margin-top: 1rem; color: #7f8c8d; font-size: 0.9rem;">
+                                        * 機構名稱為必填欄位，電話或Email至少需要一個
+                                    </p>
+                                </div>
+                                
+                                <button class="submit-btn" id="uploadContactsBtn" style="display: none;">
+                                    <i class="fas fa-upload"></i>
+                                    匯入機構聯絡資訊
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Article Upload -->
+                        <div class="upload-card">
+                            <div class="card-header">
+                                <i class="fas fa-file-alt"></i>
+                                <h3>文章資料</h3>
+                                <span class="badge article">文章</span>
+                            </div>
+                            
+                            <div class="upload-tabs">
+                                <button class="tab-btn active" data-tab="file">檔案上傳</button>
+                                <button class="tab-btn" data-tab="text">文字輸入</button>
+                            </div>
+
+                            <!-- File Upload -->
+                            <div id="fileTab" class="tab-content active">
+                                <div class="upload-area" id="articleUploadArea">
+                                    <i class="fas fa-file-upload"></i>
+                                    <p>拖放文件檔案到這裡，或點擊選擇檔案</p>
+                                    <input type="file" id="articleFile" accept=".pdf,.docx,.txt,.md,.html">
+                                    <button class="upload-btn">選擇檔案</button>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="articleCategory">分類 *</label>
+                                        <input type="text" id="articleCategory" placeholder="例如: 毒防知識, 法規, 案例">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="articleSource">來源 *</label>
+                                        <input type="text" id="articleSource" placeholder="例如: 毒防局官網, 新聞報導">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="articleLang">語言</label>
+                                        <select id="articleLang">
+                                            <option value="zh-TW">繁體中文</option>
+                                            <option value="en">English</option>
+                                            <option value="vi">Tiếng Việt</option>
+                                            <option value="id">Bahasa Indonesia</option>
+                                            <option value="th">ไทย</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="articleDate">發布日期</label>
+                                        <input type="date" id="articleDate">
+                                    </div>
+                                </div>
+                                
+                                <button class="submit-btn" id="uploadArticleBtn">
+                                    <i class="fas fa-upload"></i>
+                                    上傳文章
+                                </button>
+                            </div>
+
+                            <!-- Text Input -->
+                            <div id="textTab" class="tab-content">
+                                <div class="form-group">
+                                    <label for="textTitle">標題 *</label>
+                                    <input type="text" id="textTitle" placeholder="文章標題">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="textContent">內容 *</label>
+                                    <textarea id="textContent" rows="10" placeholder="輸入文章內容..."></textarea>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="textCategory">分類 *</label>
+                                        <input type="text" id="textCategory" placeholder="例如: 毒防知識, 法規, 案例">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="textSource">來源 *</label>
+                                        <input type="text" id="textSource" placeholder="例如: 毒防局官網, 新聞報導">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="textLang">語言</label>
+                                        <select id="textLang">
+                                            <option value="zh-TW">繁體中文</option>
+                                            <option value="en">English</option>
+                                            <option value="vi">Tiếng Việt</option>
+                                            <option value="id">Bahasa Indonesia</option>
+                                            <option value="th">ไทย</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="textDate">發布日期</label>
+                                        <input type="date" id="textDate">
+                                    </div>
+                                </div>
+                                
+                                <button class="submit-btn" id="uploadTextBtn">
+                                    <i class="fas fa-save"></i>
+                                    儲存文章
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Uploads -->
+                    <div class="recent-uploads">
+                        <h3>最近上傳</h3>
+                        <div class="uploads-list" id="recentUploadsList">
+                            <!-- 動態載入 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Page (已整合到知識庫頁面) -->
+                <div id="searchPage" class="page" style="display: none;">
+                    <div class="page-header">
+                        <h2>搜尋知識</h2>
+                        <p>在知識庫中搜尋相關資訊</p>
+                    </div>
+
+                    <div class="search-container">
+                        <div class="search-form">
+                            <div class="search-input-group">
+                                <input type="text" id="searchQuery" placeholder="輸入搜尋關鍵字...">
+                                <button id="searchSubmitBtn">
+                                    <i class="fas fa-search"></i>
+                                    搜尋
+                                </button>
+                            </div>
+                            
+                            <div class="advanced-options" id="advancedOptions" style="display: none;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="searchK">結果數量</label>
+                                        <input type="number" id="searchK" value="10" min="1" max="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="searchThreshold">相似度閾值</label>
+                                        <input type="range" id="searchThreshold" min="0" max="1" step="0.1" value="0.7">
+                                        <span id="thresholdValue">0.7</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="searchFilter">篩選類型</label>
+                                        <select id="searchFilter">
+                                            <option value="">全部</option>
+                                            <option value="authority">權威資料</option>
+                                            <option value="article">文章</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="searchCategory">分類</label>
+                                        <input type="text" id="searchCategory" placeholder="例如: 毒防知識">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="toggle-advanced" id="toggleAdvanced">
+                                <i class="fas fa-cog"></i>
+                                進階選項
+                            </button>
+                        </div>
+
+                        <div class="search-results" id="searchResults">
+                            <!-- 搜尋結果將在這裡顯示 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Page -->
+                <div id="historyPage" class="page">
+                    <div class="page-header">
+                        <h2>上傳歷史</h2>
+                        <p>查看所有上傳記錄和處理狀態</p>
+                    </div>
+
+                    <div class="history-container">
+                        <div class="history-filters">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="historyType">類型</label>
+                                    <select id="historyType">
+                                        <option value="">全部</option>
+                                        <option value="authority_media">權威媒體</option>
+                                        <option value="authority_contacts">權威聯絡人</option>
+                                        <option value="article">文章</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="historyStatus">狀態</label>
+                                    <select id="historyStatus">
+                                        <option value="">全部</option>
+                                        <option value="pending">等待中</option>
+                                        <option value="processing">處理中</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="failed">失敗</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="history-list" id="historyList">
+                            <!-- 歷史記錄將在這裡顯示 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page">
+                    <div class="page-header">
+                        <h2>系統設定</h2>
+                        <p>管理系統參數和配置</p>
+                    </div>
+
+                    <div class="settings-container">
+                        <div class="settings-section">
+                            <h3>上傳設定</h3>
+                            <div class="form-group">
+                                <label for="maxFileSize">最大檔案大小 (MB)</label>
+                                <input type="number" id="maxFileSize" value="10" min="1" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="allowedTypes">允許的檔案類型</label>
+                                <input type="text" id="allowedTypes" value="jpg,png,pdf,docx,txt,csv">
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>搜尋設定</h3>
+                            <div class="form-group">
+                                <label for="defaultK">預設結果數量</label>
+                                <input type="number" id="defaultK" value="10" min="1" max="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="defaultThreshold">預設相似度閾值</label>
+                                <input type="range" id="defaultThreshold" min="0" max="1" step="0.1" value="0.7">
+                                <span id="defaultThresholdValue">0.7</span>
+                            </div>
+                        </div>
+
+                        <button class="save-settings-btn">
+                            <i class="fas fa-save"></i>
+                            儲存設定
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contacts Management Page -->
+                <div id="contactsPage" class="page">
+                    <div class="page-header">
+                        <h2>權威機構聯絡管理</h2>
+                        <p>管理毒品防制相關機構的聯絡資訊</p>
+                    </div>
+
+                    <!-- Contacts Tabs -->
+                    <div class="contacts-tabs">
+                        <button class="contact-tab-btn active" data-tab="contactsList">聯絡清單</button>
+                        <button class="contact-tab-btn" data-tab="contactsUpload">批次上傳</button>
+                        <button class="contact-tab-btn" data-tab="contactsStats">統計資訊</button>
+                    </div>
+
+                    <!-- Contacts List Tab -->
+                    <div id="contactsListTab" class="contact-tab-content active">
+                        <div class="card">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3>機構聯絡列表</h3>
+                                <button class="submit-btn" onclick="openAddContactModal()">
+                                    <i class="fas fa-plus"></i> 新增聯絡資訊
+                                </button>
+                            </div>
+
+                            <div class="search-section">
+                                <input type="text" id="contactSearchInput" placeholder="搜尋機構名稱、電話、Email..." />
+                                <select id="contactTagFilter">
+                                    <option value="">所有標籤</option>
+                                    <option value="戒毒諮詢">戒毒諮詢</option>
+                                    <option value="醫療服務">醫療服務</option>
+                                    <option value="心理諮商">心理諮商</option>
+                                    <option value="法律援助">法律援助</option>
+                                    <option value="中途之家">中途之家</option>
+                                </select>
+                                <button class="search-btn" onclick="searchContacts()">
+                                    <i class="fas fa-search"></i> 搜尋
+                                </button>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>機構名稱</th>
+                                            <th>聯絡電話</th>
+                                            <th>電子郵件</th>
+                                            <th>地址</th>
+                                            <th>服務標籤</th>
+                                            <th>備註</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="contactsTableBody">
+                                        <!-- Contacts will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="pagination" id="contactsPagination">
+                                <!-- Pagination will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacts Upload Tab -->
+                    <div id="contactsUploadTab" class="contact-tab-content">
+                        <div class="card">
+                            <h3>批次上傳聯絡資訊</h3>
+                            
+                            <div class="upload-area" id="contactsBatchUploadArea">
+                                <i class="fas fa-file-csv"></i>
+                                <p>拖放 CSV/Excel 檔案到這裡，或點擊選擇檔案</p>
+                                <input type="file" id="contactsBatchFile" accept=".csv,.xlsx,.xls" style="display: none;">
+                                <button class="upload-btn">選擇檔案</button>
+                            </div>
+
+                            <div class="template-section">
+                                <h4>CSV 格式範例：</h4>
+                                <pre style="background: #f4f4f4; padding: 10px; border-radius: 5px;">organization,phone,email,address,tags,notes
+高雄市毒品危害防制中心,07-2134875,khdrugprev@kcg.gov.tw,高雄市前鎮區凱旋四路130號,"戒毒諮詢,個案管理",提供24小時戒毒成功專線
+高雄市立凱旋醫院,07-7513171,info@ksph.kcg.gov.tw,高雄市苓雅區凱旋二路130號,"醫療服務,成癮治療",成癮治療門診</pre>
+                                <button class="download-template-btn" onclick="downloadContactTemplate()">
+                                    <i class="fas fa-download"></i> 下載範本檔案
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacts Stats Tab -->
+                    <div id="contactsStatsTab" class="contact-tab-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <i class="fas fa-building"></i>
+                                <div class="stat-value" id="totalContactsCount">0</div>
+                                <div class="stat-label">總聯絡數</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-hospital"></i>
+                                <div class="stat-value" id="medicalContactsCount">0</div>
+                                <div class="stat-label">醫療機構</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-comments"></i>
+                                <div class="stat-value" id="counselingContactsCount">0</div>
+                                <div class="stat-label">諮詢服務</div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-phone"></i>
+                                <div class="stat-value" id="phoneContactsCount">0</div>
+                                <div class="stat-label">有電話聯絡</div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>標籤分布統計</h3>
+                            <div id="tagDistribution">
+                                <!-- Tag distribution will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>處理中...</p>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal" style="display: none;">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>上傳檔案</h3>
+                <span class="close-modal" onclick="knowledgeManager.closeUploadModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="modalUploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>拖放檔案到這裡，或點擊選擇檔案</p>
+                    <p class="upload-hint">支援格式：PDF、JPG、PNG、GIF</p>
+                    <input type="file" id="modalFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.gif" style="display: none;">
+                    <button class="upload-btn">選擇檔案</button>
+                </div>
+                
+                <div id="uploadPreview" class="upload-preview" style="display: none;">
+                    <h4>待上傳檔案：</h4>
+                    <div id="filesList"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fileCategory">分類</label>
+                    <input type="text" id="fileCategory" placeholder="例如：政策文件、宣傳資料">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fileTags">標籤（用逗號分隔）</label>
+                    <input type="text" id="fileTags" placeholder="例如：毒防知識, 教育資料">
+                </div>
+                
+                <div class="form-group">
+                    <label for="fileDescription">描述</label>
+                    <textarea id="fileDescription" rows="3" placeholder="簡短描述檔案內容..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="cancel-btn" onclick="knowledgeManager.closeUploadModal()">取消</button>
+                    <button type="button" class="submit-btn" onclick="knowledgeManager.uploadFiles()">
+                        <i class="fas fa-upload"></i> 上傳
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Preview Modal -->
+    <div id="previewModal" class="modal" style="display: none;">
+        <div class="modal-content modal-fullscreen">
+            <div class="modal-header">
+                <h3 id="previewTitle">檔案預覽</h3>
+                <div class="preview-actions">
+                    <button class="btn-icon" onclick="knowledgeManager.downloadFile()">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="btn-icon" onclick="knowledgeManager.closePreview()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body preview-body">
+                <div id="previewContent">
+                    <!-- 預覽內容將在這裡顯示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="contactModalTitle">新增聯絡資訊</h3>
+                <span class="close-modal" onclick="closeContactModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm">
+                    <input type="hidden" id="contactId">
+                    
+                    <div class="form-group">
+                        <label>機構名稱 *</label>
+                        <input type="text" id="contactOrganization" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>聯絡電話</label>
+                        <input type="tel" id="contactPhone" placeholder="例：07-1234567">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>電子郵件</label>
+                        <input type="email" id="contactEmail" placeholder="example@domain.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>地址</label>
+                        <input type="text" id="contactAddress" placeholder="例：高雄市前鎮區凱旋四路130號">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>服務標籤（可多選）</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="戒毒諮詢"> 戒毒諮詢</label>
+                            <label><input type="checkbox" value="醫療服務"> 醫療服務</label>
+                            <label><input type="checkbox" value="心理諮商"> 心理諮商</label>
+                            <label><input type="checkbox" value="法律援助"> 法律援助</label>
+                            <label><input type="checkbox" value="中途之家"> 中途之家</label>
+                            <label><input type="checkbox" value="就業輔導"> 就業輔導</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>備註說明</label>
+                        <textarea id="contactNotes" rows="3" placeholder="服務時間、服務內容等..."></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="cancel-btn" onclick="closeContactModal()">取消</button>
+                        <button type="submit" class="submit-btn">儲存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20250907-2"></script>
+</body>
+</html>

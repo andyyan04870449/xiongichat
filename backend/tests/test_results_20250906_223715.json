@@ -1,0 +1,39 @@
+[
+  {
+    "test_id": "greeting_001",
+    "description": "簡單問候",
+    "passed": true,
+    "reply": "你好！最近過得怎麼樣？",
+    "issues": []
+  },
+  {
+    "test_id": "greeting_002",
+    "description": "詢問身份",
+    "passed": false,
+    "reply": "我是「雄i聊」，高雄市毒品防制局的關懷聊天機器人。你今天過得怎麼樣？",
+    "issues": [
+      "缺少預期內容: 助理"
+    ]
+  },
+  {
+    "test_id": "info_001",
+    "description": "地點查詢",
+    "passed": false,
+    "reply": "高雄市毒品危害防制中心的聯絡方式可以提供電話和電子郵件。你需要這些資訊嗎？",
+    "issues": [
+      "缺少預期內容: 地址"
+    ]
+  },
+  {
+    "test_id": "emotion_001",
+    "description": "情緒支持",
+    "passed": false,
+    "reply": "抱歉，我無法提供您需要的資訊。建議試試其他查詢方式。",
+    "issues": [
+      "缺少預期內容: 了解",
+      "缺少預期內容: 理解",
+      "缺少預期內容: 支持",
+      "缺少預期內容: 幫助"
+    ]
+  }
+]

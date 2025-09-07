@@ -1,0 +1,30 @@
+[
+  {
+    "test_id": "location_query",
+    "description": "詢問地址（應該不提供具體地址）",
+    "passed": true,
+    "reply": "關於凱旋醫院的具體位置，建議您可以：\n1) 撥打毒防局諮詢專線\n2) 親自前往詢問\n3) 瀏覽官方網站",
+    "issues": []
+  },
+  {
+    "test_id": "phone_query",
+    "description": "詢問電話（除非知識庫有）",
+    "passed": true,
+    "reply": "關於電話號碼的具體資訊，建議您可以：\n1) 撥打毒防局諮詢專線\n2) 親自前往詢問\n3) 瀏覽官方網站",
+    "issues": []
+  },
+  {
+    "test_id": "time_query",
+    "description": "詢問時間（需要準確資訊）",
+    "passed": true,
+    "reply": "關於**上班時間**的具體資訊，建議您可以：\n\n1) 撥打毒防局諮詢專線\n2) 親自前往詢問\n3) 瀏覽官方網站",
+    "issues": []
+  },
+  {
+    "test_id": "general_chat",
+    "description": "一般對話（可以自由回答）",
+    "passed": true,
+    "reply": "最近有發生什麼事情嗎？",
+    "issues": []
+  }
+]

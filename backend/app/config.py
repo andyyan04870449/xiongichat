@@ -12,8 +12,9 @@ class Settings(BaseSettings):
     
     # OpenAI
     openai_api_key: str
-    openai_model_chat: str = "gpt-4o"  # 主要聊天模型
-    openai_model_tools: str = "gpt-4o-mini"  # 工具模型
+    openai_model_chat: str = "gpt-4o"  # 主要聊天模型（生成任務）
+    openai_model_analysis: str = "gpt-4o-mini"  # 分析模型（結構化任務）
+    openai_model_tools: str = "gpt-4o-mini"  # 工具模型（已在使用）
     openai_temperature: float = 0.7
     openai_max_tokens: int = 800
     

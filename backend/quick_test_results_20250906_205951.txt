@@ -1,0 +1,67 @@
+快速品質測試結果
+================================================================================
+
+測試：簡單問候
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：建立上下文
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：代詞解析
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：情緒1
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：情緒2
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：情緒3
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：毒品詢問
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：求助
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：地址查詢
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：建立遠距離參照
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：閒聊插入
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：遠距離代詞參照
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否
+
+測試：危機
+輸入：
+輸出：'AIAnalysisLogger' object has no attribute 'log_routing_decision'
+通過：否

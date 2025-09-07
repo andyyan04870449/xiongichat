@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>測試聯絡管理</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>聯絡管理測試頁面</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>機構名稱</th>
+                <th>聯絡電話</th>
+                <th>電子郵件</th>
+                <th>地址</th>
+                <th>服務標籤</th>
+                <th>備註</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="testTableBody">
+            <tr><td colspan="7">載入中...</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        async function loadContacts() {
+            try {
+                const response = await fetch('/api/v1/contacts?limit=10');
+                const contacts = await response.json();
+                
+                const tbody = document.getElementById('testTableBody');
+                
+                if (contacts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7">無資料</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = contacts.map(contact => `
+                    <tr>
+                        <td>${contact.organization}</td>
+                        <td>${contact.phone || '-'}</td>
+                        <td>${contact.email || '-'}</td>
+                        <td style="background-color: yellow;">${contact.address || '-'}</td>
+                        <td>${contact.tags ? contact.tags.join(', ') : '-'}</td>
+                        <td>${contact.notes ? contact.notes.substring(0, 30) + '...' : '-'}</td>
+                        <td>編輯 | 刪除</td>
+                    </tr>
+                `).join('');
+                
+                console.log('載入了', contacts.length, '筆資料');
+                console.log('第一筆資料:', contacts[0]);
+            } catch (error) {
+                console.error('載入失敗:', error);
+                document.getElementById('testTableBody').innerHTML = 
+                    '<tr><td colspan="7">載入失敗: ' + error.message + '</td></tr>';
+            }
+        }
+        
+        loadContacts();
+    </script>
+</body>
+</html>

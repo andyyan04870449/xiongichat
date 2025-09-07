@@ -1,0 +1,26 @@
+[
+  {
+    "test_id": "greeting_001",
+    "description": "簡單問候",
+    "passed": false,
+    "error": "HTTP 307"
+  },
+  {
+    "test_id": "greeting_002",
+    "description": "詢問身份",
+    "passed": false,
+    "error": "HTTP 307"
+  },
+  {
+    "test_id": "info_001",
+    "description": "地點查詢",
+    "passed": false,
+    "error": "HTTP 307"
+  },
+  {
+    "test_id": "emotion_001",
+    "description": "情緒支持",
+    "passed": false,
+    "error": "HTTP 307"
+  }
+]
