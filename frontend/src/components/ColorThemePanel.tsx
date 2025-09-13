@@ -222,8 +222,8 @@ export function ColorThemePanel({ isOpen, onClose }: ColorThemePanelProps) {
                 <span className="text-gray-400 ml-1">({getCurrentThemeIndex() + 1}/{colorSchemes.length})</span>
               </span>
             </div>
-            {/* 快捷鍵提示 */}
-            <div className="flex items-center justify-between text-[10px] text-gray-500">
+            {/* 快捷鍵提示 - 只在桌面版顯示 */}
+            <div className="hidden md:flex items-center justify-between text-[10px] text-gray-500">
               <div className="flex gap-3">
                 <span>
                   <kbd className="px-1 py-0.5 bg-white rounded border">↑↓</kbd> 切換主題

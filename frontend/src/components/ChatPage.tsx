@@ -701,15 +701,15 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
           right: 0,
           bottom: 0
         }}>
-          <div 
-            className="absolute right-0 top-0 w-80 max-w-[90vw] bg-white/95 backdrop-blur-sm shadow-xl overflow-y-auto"
-            style={{ 
-              height: keyboardVisible ? 'calc(var(--visual-vh, 1vh) * 100)' : '100vh',
-              maxHeight: keyboardVisible ? 'calc(var(--visual-vh, 1vh) * 100)' : '100vh'
+          <div
+            className="absolute right-0 top-0 w-80 max-w-[90vw] bg-white/95 backdrop-blur-sm shadow-xl flex flex-col"
+            style={{
+              height: '100dvh',
+              maxHeight: '100dvh'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="p-4 border-b" style={{ borderColor: 'var(--theme-border)' }}>
+            <div className="p-4 border-b flex-shrink-0" style={{ borderColor: 'var(--theme-border)' }}>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-gray-800">服務選單</h3>
                 <Button variant="ghost" size="sm" onClick={() => setShowServices(false)} className="min-h-[44px]">
@@ -717,8 +717,9 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
                 </Button>
               </div>
             </div>
-            <div className="p-4 space-y-3">
-              {serviceCards.map((service, index) => (
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-4 space-y-3">
+                {serviceCards.map((service, index) => (
                 <Card 
                   key={index} 
                   className="p-4 hover:shadow-md transition-shadow cursor-pointer border-l-4 border min-h-[44px] flex items-center"
@@ -742,6 +743,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
                   </div>
                 </Card>
               ))}
+              </div>
             </div>
           </div>
         </div>
