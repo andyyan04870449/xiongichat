@@ -115,3 +115,45 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend build
+frontend/dist/
+frontend/build/
+
+# Playwright
+playwright_env/
+
+# Test reports
+*_test_report_*.json
+*_test_*.json
+emotion_progression_test_*.json
+quick_memory_verify_*.json
+simple_long_conversation_report_*.json
+memory_enhanced_test_report_*.json
+long_conversation_test_report_*.json
+extreme_test_report_*.json
+complete_test_report_*.json
+
+# Upload files
+backend/uploads/
+
+# Analysis files
+*.csv
+*.txt
+knowledge_full_list.txt
+institution_contacts_analysis.csv
+
+# HTML files
+*.html
+chat_page.html
+guide_page.html
+
+# Documentation
+*.md
+!README.md
+

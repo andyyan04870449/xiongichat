@@ -1,0 +1,119 @@
+/* 防止橫向滾動 */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* 限制所有內容不超出視窗 */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 富文本內容樣式 */
+.rich-text-content {
+  font-size: inherit;
+  color: inherit;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.rich-text-content b,
+.rich-text-content strong {
+  font-weight: 600;
+}
+
+.rich-text-content a {
+  color: #3b82f6;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.rich-text-content a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.rich-text-content li {
+  margin: 0.25rem 0;
+}
+
+.rich-text-content br {
+  display: block;
+  content: "";
+  margin: 0.25rem 0;
+}
+
+/* 圖片輪播容器樣式 */
+.image-gallery-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* 隱藏滾動條 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 資訊卡片輪播樣式 */
+.info-card-carousel {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  contain: layout; /* 限制容器內容不影響外部佈局 */
+}
+
+/* 限制訊息氣泡內容寬度 */
+.message-bubble-content {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 確保聊天區域不會橫向滾動 */
+#root,
+.chat-container,
+.messages-container {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* 限制行數的文字 */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
