@@ -259,7 +259,7 @@ export function ChatHistoryModal({ isOpen, onClose, chatHistories }: ChatHistory
                           <div className={`flex flex-col ${message.sender === 'user' ? 'items-end' : 'items-start'}`}>
                             <div className="flex items-center mb-1 space-x-2">
                               <span className="text-xs text-gray-500 font-medium">
-                                {message.senderName || (message.sender === 'user' ? '我' : '張諮詢師')}
+                                {message.senderName || (message.sender === 'user' ? '我' : '雄i聊')}
                               </span>
                               <span className="text-xs text-gray-400">{message.timestamp}</span>
                             </div>

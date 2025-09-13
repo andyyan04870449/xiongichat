@@ -37,23 +37,23 @@ export function AssessmentComplete({ onBack, assessmentTitle = '評估' }: Asses
 
       <div className="max-w-4xl mx-auto p-4 md:p-8">
         {/* Logo and Thank You Message - No Card wrapper */}
-        <div className="text-center py-8 md:py-16">
-          <div className="flex justify-center mb-8">
-            <img src={logo} alt="雄i聊" className="h-20 md:h-24 w-auto" />
+        <div className="text-center py-6 md:py-12">
+          <div className="flex justify-center mb-6">
+            <img src={logo} alt="雄i聊" className="h-12 md:h-16 w-auto" />
           </div>
           
-          <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-4">
             評估完成
           </h2>
-          
-          <p className="text-lg md:text-xl text-gray-700 mb-8">
+
+          <p className="text-base md:text-lg text-gray-700 mb-6">
             感謝您完成評估
           </p>
 
           <div className="flex justify-center">
-            <Button 
-              onClick={onBack} 
-              className="px-8 py-3 text-white" 
+            <Button
+              onClick={onBack}
+              className="px-6 py-2.5 text-white"
               style={{ backgroundColor: 'var(--theme-primary)' }}
             >
               返回評量中心

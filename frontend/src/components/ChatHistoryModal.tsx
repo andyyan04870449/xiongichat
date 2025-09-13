@@ -272,13 +272,17 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
   const [error, setError] = useState<string | null>(null)
   const [detailError, setDetailError] = useState<string | null>(null)
   const [isUsingMock, setIsUsingMock] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // 檢測移動設備
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      // 同時檢查寬度和觸控設備
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+      const isSmallScreen = window.innerWidth < 768
+      setIsMobile(isSmallScreen || isTouchDevice)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -392,9 +396,14 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
   const handleSelectHistory = async (history: ChatHistory) => {
     setSelectedHistoryChat(history)
     setSelectedConversationDetail(null) // 清除之前的詳情
-    
+
     // 載入對話詳情
     await loadConversationDetail(history.id)
+
+    // 手機版自動關閉側邊欄
+    if (isMobile) {
+      setIsSidebarOpen(false)
+    }
   }
 
   // 當模態框打開時載入對話記錄
@@ -415,13 +424,30 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
         {/* 標題欄 */}
         <div className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b bg-white">
           <div className="flex items-center space-x-3">
-            <History className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
-            <div>
-              <h2 className="font-semibold text-gray-800">對話記錄</h2>
-              {isUsingMock && (
-                <p className="text-xs text-orange-600">離線模式 - 顯示示範資料</p>
-              )}
-            </div>
+            {isMobile ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsSidebarOpen(true)}
+                className="flex items-center space-x-2 text-gray-800 hover:bg-gray-100"
+              >
+                <History className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
+                <span className="font-semibold">對話記錄</span>
+                {isUsingMock && (
+                  <span className="text-xs text-orange-600">（離線）</span>
+                )}
+              </Button>
+            ) : (
+              <>
+                <History className="w-5 h-5" style={{ color: 'var(--theme-primary)' }} />
+                <div>
+                  <h2 className="font-semibold text-gray-800">對話記錄</h2>
+                  {isUsingMock && (
+                    <p className="text-xs text-orange-600">離線模式 - 顯示示範資料</p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -439,9 +465,11 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
             </Button>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              title="關閉對話記錄"
+              aria-label="關閉"
             >
               <X className="w-5 h-5" />
             </Button>
@@ -450,25 +478,53 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
 
         {/* 主要內容區域 */}
         <div className="flex-1 flex overflow-hidden">
-          {/* 左側：對話記錄列表 */}
-          {isMobile ? (
-            /* 移動設備：固定寬度 */
-            <div className="w-80 max-w-[45vw] border-r bg-gray-50/50 flex flex-col" style={{ borderColor: 'var(--theme-border)' }}>
-              <div className="flex-shrink-0 px-4 py-3 bg-gray-100/50 border-b">
-                <h3 className="font-medium text-gray-800">歷史對話</h3>
-              </div>
-              <ScrollArea className="flex-1">
-                <ConversationHistoryList
-                  chatHistories={chatHistories}
-                  selectedHistoryChat={selectedHistoryChat}
-                  onSelectHistory={handleSelectHistory}
-                  isLoading={isLoading}
-                  error={error}
-                  refreshHistory={refreshHistory}
+          {/* 手機版：側邊滑入面板 */}
+          {isMobile && (
+            <>
+              {/* 遮罩層 */}
+              {isSidebarOpen && (
+                <div
+                  className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+                  onClick={() => setIsSidebarOpen(false)}
                 />
-              </ScrollArea>
-            </div>
-          ) : (
+              )}
+
+              {/* 側邊面板 */}
+              <div
+                className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-gray-50/50 border-r z-50 transform transition-transform duration-300 ease-in-out ${
+                  isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}
+                style={{ borderColor: 'var(--theme-border)' }}
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex-shrink-0 px-4 py-3 bg-gray-100/50 border-b flex items-center justify-between">
+                    <h3 className="font-medium text-gray-800">歷史對話</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <ScrollArea className="flex-1">
+                    <ConversationHistoryList
+                      chatHistories={chatHistories}
+                      selectedHistoryChat={selectedHistoryChat}
+                      onSelectHistory={handleSelectHistory}
+                      isLoading={isLoading}
+                      error={error}
+                      refreshHistory={refreshHistory}
+                    />
+                  </ScrollArea>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* 桌面版：可調整大小的側邊欄 */}
+          {!isMobile && (
             /* 桌面設備：可調整大小 */
             <Resizable
               size={{ width: sidebarWidth, height: '100%' }}
@@ -537,8 +593,9 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                 </div>
 
                 {/* 對話訊息列表 */}
-                <ScrollArea className="flex-1">
-                  <div className="p-4">
+                <div className="flex-1 overflow-hidden relative">
+                  <ScrollArea className="absolute inset-0">
+                    <div className="p-4">
                     {/* 載入詳情狀態 */}
                     {isLoadingDetail && (
                       <div className="text-center text-gray-500 py-8">
@@ -597,7 +654,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                               <div className={`flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
                                 <div className="flex items-center mb-1 space-x-2">
                                   <span className="text-xs text-gray-500 font-medium">
-                                    {message.role === 'user' ? '我' : '張諮詢師'}
+                                    {message.role === 'user' ? '我' : '雄i聊'}
                                   </span>
                                   <span className="text-xs text-gray-400">
                                     {parseDateTime(message.created_at).toLocaleString('zh-TW', {
@@ -636,8 +693,9 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                         <p className="text-sm">對話記錄中沒有找到任何訊息內容</p>
                       </div>
                     )}
-                  </div>
-                </ScrollArea>
+                    </div>
+                  </ScrollArea>
+                </div>
               </>
             ) : (
               /* 未選擇對話時的提示 */

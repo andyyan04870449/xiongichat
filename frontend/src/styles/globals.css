@@ -39,10 +39,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  
-  /* 動態視窗高度變數 */
-  --vh: 1vh;
-  --visual-vh: 1vh;
 }
 
 .dark {
@@ -135,37 +131,23 @@
     width: 100%;
     /* 防止iOS Safari的橡皮筋效果 */
     overscroll-behavior: none;
-    /* 防止水平滾動 */
-    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground;
-    height: 100%;
     width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
-    /* 使用動態viewport高度以適應移動瀏覽器的地址欄 */
-    min-height: 100vh;
-    min-height: 100dvh; /* 動態viewport高度，支援現代瀏覽器 */
-    min-height: calc(var(--vh, 1vh) * 100); /* 自定義viewport高度 */
     /* 防止iOS Safari的橡皮筋效果 */
     overscroll-behavior: none;
-    /* 防止水平滾動 */
-    overflow-x: hidden;
-    /* 改善移動設備的觸控滾動 */
-    -webkit-overflow-scrolling: touch;
   }
 
   /* 確保根容器填滿整個屏幕 */
   #root {
-    height: 100%;
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    min-height: calc(var(--vh, 1vh) * 100);
-    display: flex;
-    flex-direction: column;
+    height: 100%;
+    position: relative;
   }
 }
 
@@ -228,12 +210,21 @@
 
 /* 移動設備特定優化 */
 @media (max-width: 768px) {
-  /* 確保移動設備上的完整高度 */
-  html, body, #root {
-    height: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    min-height: calc(var(--vh, 1vh) * 100);
+  /* 確保移動設備上的完整高度 - 使用 dvh 支援動態視窗高度 */
+  @supports (height: 100dvh) {
+    html, body, #root {
+      position: fixed;
+      width: 100%;
+      height: 100dvh;
+    }
+  }
+
+  @supports not (height: 100dvh) {
+    html, body, #root {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
   }
 
   /* 移動設備上的輸入框優化 */
@@ -258,25 +249,19 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  /* 鍵盤顯示時的調整 */
-  .keyboard-visible {
-    height: calc(var(--visual-vh, 1vh) * 100);
-    min-height: calc(var(--visual-vh, 1vh) * 100);
-  }
 }
 
 /* iOS Safari特定修復 */
 @supports (-webkit-touch-callout: none) {
-  html, body, #root {
-    height: -webkit-fill-available;
-    min-height: -webkit-fill-available;
+  @supports (height: 100dvh) {
+    html, body, #root {
+      height: 100dvh;
+    }
   }
-  
-  /* iOS鍵盤顯示時的特殊處理 */
-  @media (max-width: 768px) {
-    .keyboard-visible {
-      height: calc(var(--visual-vh, 1vh) * 100);
-      min-height: calc(var(--visual-vh, 1vh) * 100);
+
+  @supports not (height: 100dvh) {
+    html, body, #root {
+      height: 100%;
     }
   }
 }
@@ -290,16 +275,17 @@
     padding-right: env(safe-area-inset-right);
   }
 
-  /* 鍵盤適應高度工具類 */
-  .keyboard-adaptive-height {
-    height: calc(var(--visual-vh, 1vh) * 100);
-    min-height: calc(var(--visual-vh, 1vh) * 100);
+  /* 視窗高度工具類 - 使用 dvh 單位以適應鍵盤 */
+  @supports (height: 100dvh) {
+    .viewport-height {
+      height: 100dvh;
+    }
   }
-  
-  /* 聊天容器專用高度 */
-  .chat-container-height {
-    height: calc(var(--visual-vh, 1vh) * 100);
-    max-height: calc(var(--visual-vh, 1vh) * 100);
+
+  @supports not (height: 100dvh) {
+    .viewport-height {
+      height: 100vh;
+    }
   }
 }
 

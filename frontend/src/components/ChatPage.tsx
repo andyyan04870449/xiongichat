@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Send, Phone, Heart, BookOpen, Users, Calendar, MessageCircle, LogOut, Flame, Shield, Baby, HandHeart, Menu, X, ClipboardList, AlertCircle, Loader2, WifiOff, AlertTriangle, History, FileText } from 'lucide-react'
+import { Send, Phone, Heart, BookOpen, Users, Calendar, MessageCircle, Flame, Shield, Baby, HandHeart, Menu, X, ClipboardList, AlertCircle, Loader2, WifiOff, AlertTriangle, History, FileText } from 'lucide-react'
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card } from "./ui/card"
@@ -15,6 +15,7 @@ import chatbotAvatar from 'figma:asset/d2489a7281852ae82edf81f47c4ed2529464e955.
 import { sendChatMessageSmart, generateUserId, testApiConnection, getCurrentApiEndpoint, getApiStatus, setApiEndpoint, getAvailableEndpoints, ApiError, type ChatResponse } from '../services/chatApi'
 import { Message as MessageType, ImageContent, InfoCard } from '../types/message'
 import { COMMAND_RESPONSES, isValidCommand, getCommandResponse } from '../data/commandResponses'
+import { SettingsDropdown } from './SettingsDropdown'
 import { RichTextRenderer } from './message/RichTextRenderer'
 import { ImageGallery } from './message/ImageGallery'
 import { InfoCardCarousel } from './message/InfoCardCarousel'
@@ -251,21 +252,12 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
     const handleKeyboardToggle = (event: CustomEvent) => {
       const { visible } = event.detail
       setKeyboardVisible(visible)
-      
+
       if (visible) {
         // 鍵盤顯示時，確保滾動到底部並讓輸入框可見
         setTimeout(() => {
           scrollToBottom(true)
-          
-          // 額外確保輸入框可見
-          if (inputRef.current) {
-            inputRef.current.scrollIntoView({
-              behavior: 'smooth',
-              block: 'end', // 確保輸入框在視窗底部
-              inline: 'nearest'
-            })
-          }
-        }, 150) // 稍微延長時間確保鍵盤完全顯示
+        }, 150)
       } else {
         // 鍵盤隱藏時，重新滾動到底部
         setTimeout(() => {
@@ -275,7 +267,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
     }
 
     window.addEventListener('keyboardToggle', handleKeyboardToggle as EventListener)
-    
+
     return () => {
       window.removeEventListener('keyboardToggle', handleKeyboardToggle as EventListener)
     }
@@ -649,16 +641,14 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
   }
 
   return (
-    <div 
+    <div
       ref={chatContainerRef}
-      className={`w-full h-full safe-area-inset transition-all duration-300 ${
-        keyboardVisible ? 'keyboard-adaptive-height' : 'min-h-screen'
-      }`}
+      className="fixed inset-0 flex flex-col"
       style={{
         background: `linear-gradient(135deg, var(--theme-background), var(--theme-surface))`,
-        height: keyboardVisible ? 'calc(var(--visual-vh, 1vh) * 100)' : '100vh',
-        maxHeight: keyboardVisible ? 'calc(var(--visual-vh, 1vh) * 100)' : '100vh'
-      }}
+        height: '100vh', // fallback
+        height: '100dvh' // 使用 dvh 單位以自動適應鍵盤
+      } as React.CSSProperties}
     >
       {/* Header */}
       <header className="bg-white/90 backdrop-blur-sm shadow-sm border-b flex-shrink-0" style={{ borderColor: 'var(--theme-border)' }}>
@@ -697,16 +687,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
                 <span className="hidden md:inline">對話記錄</span>
               </Button>
               
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onLogout}
-                className="text-gray-600 hover:text-gray-800 min-h-[44px]"
-                style={{ borderColor: 'var(--theme-border)' }}
-              >
-                <LogOut className="w-4 h-4 mr-0 md:mr-2" />
-                <span className="hidden md:inline">登出</span>
-              </Button>
+              <SettingsDropdown onLogout={onLogout} />
             </div>
           </div>
         </div>
@@ -714,7 +695,12 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
 
       {/* Mobile Service Menu Overlay */}
       {showServices && (
-        <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={() => setShowServices(false)}>
+        <div className="fixed inset-0 bg-black/30 z-40 md:hidden" onClick={() => setShowServices(false)} style={{
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0
+        }}>
           <div 
             className="absolute right-0 top-0 w-80 max-w-[90vw] bg-white/95 backdrop-blur-sm shadow-xl overflow-y-auto"
             style={{ 
@@ -762,21 +748,16 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       )}
 
       {/* Main Content */}
-      <div 
-        className="flex-1 w-full flex flex-col md:flex-row gap-2 md:gap-6 p-2 md:p-4 overflow-hidden"
-        style={{ 
-          height: keyboardVisible 
-            ? 'calc(var(--visual-vh, 1vh) * 100 - 70px)' 
-            : 'calc(100vh - 70px)',
-          maxHeight: keyboardVisible 
-            ? 'calc(var(--visual-vh, 1vh) * 100 - 70px)' 
-            : 'calc(100vh - 70px)'
-        }}
+      <div
+        className="flex-1 w-full flex flex-col md:flex-row gap-2 md:gap-6 p-2 md:p-4 min-h-0 overflow-hidden"
       >
         {/* Chat Area */}
-        <div 
-          className="flex-1 bg-white/90 backdrop-blur-sm rounded-lg md:rounded-xl shadow-sm overflow-hidden border flex flex-col min-h-0"
-          style={{ borderColor: 'var(--theme-border)' }}
+        <div
+          className="flex-1 bg-white/90 backdrop-blur-sm rounded-lg md:rounded-xl shadow-sm border flex flex-col min-h-0"
+          style={{
+            borderColor: 'var(--theme-border)',
+            overflow: 'hidden'
+          }}
         >
           {/* Chat Header */}
           <div 

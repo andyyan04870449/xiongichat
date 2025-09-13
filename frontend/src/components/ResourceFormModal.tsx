@@ -5,7 +5,7 @@ import { Checkbox } from './ui/checkbox'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Card } from './ui/card'
-import { ChevronRight, Check, Heart } from 'lucide-react'
+import { ChevronRight, Check, Heart, X } from 'lucide-react'
 import logo from 'figma:asset/e9a9f75d2ac26ddaa75b766f16261c08e59f132c.png'
 
 interface ResourceFormModalProps {
@@ -57,18 +57,58 @@ const assistanceData: FormOption[] = [
   { value: '高市慈善團體聯合總會', label: '高市慈善團體聯合總會', category: '其他單位' },
 ]
 
-const medicalOptions = [
-  '無', '焦慮', '失眠', '自律神經失調', '情緒障礙', '憂鬱', '恐慌', 
-  '失智症', '自閉症', '注意力不足', '過動症', '妄想', '強迫', 
-  '躁鬱', '自殺', '思覺失調', '妥瑞氏', '自殘', 
-  '婦女身心困擾', '青少年心理調適', '其他'
+// 醫療協助資料結構
+const medicalData: FormOption[] = [
+  { value: '無', label: '無' },
+  // 情緒相關
+  { value: '焦慮', label: '焦慮', category: '情緒相關' },
+  { value: '憂鬱', label: '憂鬱', category: '情緒相關' },
+  { value: '恐慌', label: '恐慌', category: '情緒相關' },
+  { value: '情緒障礙', label: '情緒障礙', category: '情緒相關' },
+  { value: '躁鬱', label: '躁鬱', category: '情緒相關' },
+  // 生理相關
+  { value: '失眠', label: '失眠', category: '生理相關' },
+  { value: '自律神經失調', label: '自律神經失調', category: '生理相關' },
+  // 認知相關
+  { value: '失智症', label: '失智症', category: '認知相關' },
+  { value: '妄想', label: '妄想', category: '認知相關' },
+  { value: '思覺失調', label: '思覺失調', category: '認知相關' },
+  // 發展相關
+  { value: '自閉症', label: '自閉症', category: '發展相關' },
+  { value: '注意力不足', label: '注意力不足', category: '發展相關' },
+  { value: '過動症', label: '過動症', category: '發展相關' },
+  { value: '妥瑞氏', label: '妥瑞氏', category: '發展相關' },
+  // 行為相關
+  { value: '強迫', label: '強迫', category: '行為相關' },
+  { value: '自殺', label: '自殺', category: '行為相關' },
+  { value: '自殘', label: '自殘', category: '行為相關' },
+  // 特定族群
+  { value: '婦女身心困擾', label: '婦女身心困擾', category: '特定族群' },
+  { value: '青少年心理調適', label: '青少年心理調適', category: '特定族群' },
+  { value: '其他', label: '其他', category: '特定族群' },
 ]
 
-const resourceOptions = [
-  '無', '福利服務', '法律服務', '就業服務', '醫療服務', '心理諮商服務',
-  '經濟支持', '職能培力與就業輔導', '安置資源連結',
-  '家庭支持與互助團體(包含愛與陪伴團體)', '家庭維繫、修復及支持性服務活動',
-  '戒癮相關知識', '毒品防制宣導活動', '邀請參與社區相關活動', '其他'
+// 資源協助資料結構
+const resourceData: FormOption[] = [
+  { value: '無', label: '無' },
+  // 基本服務
+  { value: '福利服務', label: '福利服務', category: '基本服務' },
+  { value: '法律服務', label: '法律服務', category: '基本服務' },
+  { value: '醫療服務', label: '醫療服務', category: '基本服務' },
+  { value: '心理諮商服務', label: '心理諮商服務', category: '基本服務' },
+  // 就業與經濟
+  { value: '就業服務', label: '就業服務', category: '就業與經濟' },
+  { value: '經濟支持', label: '經濟支持', category: '就業與經濟' },
+  { value: '職能培力與就業輔導', label: '職能培力與就業輔導', category: '就業與經濟' },
+  // 家庭與社區
+  { value: '安置資源連結', label: '安置資源連結', category: '家庭與社區' },
+  { value: '家庭支持與互助團體(包含愛與陪伴團體)', label: '家庭支持與互助團體', category: '家庭與社區' },
+  { value: '家庭維繫、修復及支持性服務活動', label: '家庭維繫、修復及支持性服務', category: '家庭與社區' },
+  // 預防與教育
+  { value: '戒癮相關知識', label: '戒癮相關知識', category: '預防與教育' },
+  { value: '毒品防制宣導活動', label: '毒品防制宣導活動', category: '預防與教育' },
+  { value: '邀請參與社區相關活動', label: '邀請參與社區相關活動', category: '預防與教育' },
+  { value: '其他', label: '其他', category: '預防與教育' },
 ]
 
 export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
@@ -130,11 +170,36 @@ export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
     return acc
   }, {} as Record<string, FormOption[]>)
 
+  // 按類別分組醫療協助
+  const groupedMedical = medicalData.reduce((acc, item) => {
+    if (!item.category) {
+      acc['其他'] = acc['其他'] || []
+      acc['其他'].push(item)
+    } else {
+      acc[item.category] = acc[item.category] || []
+      acc[item.category].push(item)
+    }
+    return acc
+  }, {} as Record<string, FormOption[]>)
+
+  // 按類別分組資源協助
+  const groupedResource = resourceData.reduce((acc, item) => {
+    if (!item.category) {
+      acc['其他'] = acc['其他'] || []
+      acc['其他'].push(item)
+    } else {
+      acc[item.category] = acc[item.category] || []
+      acc[item.category].push(item)
+    }
+    return acc
+  }, {} as Record<string, FormOption[]>)
+
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent 
-        className="max-w-7xl w-[95vw] max-h-[90vh] p-0 overflow-hidden flex flex-col"
+      <DialogContent
+        className="w-[1200px] max-w-[95vw] h-[700px] max-h-[90vh] p-0 overflow-hidden flex flex-col"
         hideCloseButton={true}
+        aria-describedby="resource-form-description"
         style={{
           background: 'linear-gradient(to bottom, var(--theme-background), var(--theme-surface))',
           WebkitFontSmoothing: 'antialiased',
@@ -143,21 +208,34 @@ export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
         }}
       >
         <DialogTitle className="sr-only">資源需求調查表</DialogTitle>
+        <p id="resource-form-description" className="sr-only">
+          請填寫您的資源需求，共三個問題
+        </p>
         {currentStep < 4 ? (
           <>
             {/* Header - 固定在頂部 */}
-            <div 
-              className="px-6 py-4 text-white flex-shrink-0"
+            <div
+              className="px-6 py-4 text-white flex-shrink-0 relative"
               style={{
                 background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))',
               }}
             >
-              <h2 className="text-xl font-bold mb-1">資源需求調查表</h2>
-              <div className="flex items-center gap-2 text-white/80 text-sm">
-                <span>第 {currentStep} 題</span>
-                <span>/</span>
-                <span>共 3 題</span>
+              <div>
+                <h2 className="text-xl font-bold mb-1">資源需求調查表</h2>
+                <div className="flex items-center gap-2 text-white/80 text-sm">
+                  <span>第 {currentStep} 題</span>
+                  <span>/</span>
+                  <span>共 3 題</span>
+                </div>
               </div>
+              {/* 關閉按鈕 */}
+              <button
+                onClick={handleClose}
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-colors"
+                aria-label="關閉"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
             </div>
 
             {/* Content - 可滾動區域 */}
@@ -232,42 +310,70 @@ export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
                   <h3 className="text-lg font-semibold sticky top-0 bg-white py-2 z-10" style={{ color: 'var(--theme-text)' }}>
                     2. 請問您還有需要哪方面進一步的就醫協助嗎？
                   </h3>
-                  
-                  <div className="flex flex-wrap gap-3">
-                    {medicalOptions.map(option => (
-                      <Card 
-                        key={option}
-                        className="hover:shadow-md transition-shadow cursor-pointer"
-                        style={{ 
-                          borderColor: formData.medical.has(option) 
-                            ? 'var(--theme-primary)' 
-                            : 'var(--theme-border)',
-                          borderWidth: '2px',
-                          background: formData.medical.has(option)
-                            ? 'var(--theme-surface)'
-                            : 'white'
-                        }}
-                      >
-                        <label className="flex items-center gap-2 px-3 py-2 cursor-pointer">
-                          <Checkbox
-                            checked={formData.medical.has(option)}
-                            onCheckedChange={() => handleCheckboxChange('medical', option)}
-                            className="w-4 h-4"
-                          />
-                          <span className="text-sm whitespace-nowrap">{option}</span>
-                        </label>
-                      </Card>
-                    ))}
-                  </div>
+
+                  {/* 無選項 */}
+                  <Card className="p-3 border-2 inline-block" style={{ borderColor: 'var(--theme-border)' }}>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={formData.medical.has('無')}
+                        onCheckedChange={() => handleCheckboxChange('medical', '無')}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-base font-medium">無需其他協助</span>
+                    </label>
+                  </Card>
+
+                  {/* 分類顯示 */}
+                  {Object.entries(groupedMedical).map(([category, items]) => {
+                    if (category === '其他') return null
+
+                    return (
+                      <div key={category} className="space-y-2">
+                        <h4
+                          className="font-semibold text-base flex items-center gap-1"
+                          style={{ color: 'var(--theme-primary)' }}
+                        >
+                          <ChevronRight className="w-3 h-3" />
+                          {category}
+                        </h4>
+                        <div className="flex flex-wrap gap-3 pl-4">
+                          {items.map(item => (
+                            <Card
+                              key={item.value}
+                              className="hover:shadow-md transition-shadow cursor-pointer"
+                              style={{
+                                borderColor: formData.medical.has(item.value)
+                                  ? 'var(--theme-primary)'
+                                  : 'var(--theme-border)',
+                                borderWidth: '2px',
+                                background: formData.medical.has(item.value)
+                                  ? 'var(--theme-surface)'
+                                  : 'white'
+                              }}
+                            >
+                              <label className="flex items-center gap-2 px-3 py-2 cursor-pointer">
+                                <Checkbox
+                                  checked={formData.medical.has(item.value)}
+                                  onCheckedChange={() => handleCheckboxChange('medical', item.value)}
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-sm whitespace-nowrap">{item.label}</span>
+                              </label>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
                   
                   {formData.medical.has('其他') && (
-                    <div className="mt-4">
+                    <div className="mt-4 pl-4">
                       <Input
                         placeholder="請輸入其他就醫協助..."
                         value={formData.medicalOther}
                         onChange={(e) => setFormData(prev => ({ ...prev, medicalOther: e.target.value }))}
                         className="w-full max-w-lg text-base"
-                        style={{ 
+                        style={{
                           borderColor: 'var(--theme-border)',
                           background: 'white'
                         }}
@@ -283,43 +389,70 @@ export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
                   <h3 className="text-lg font-semibold sticky top-0 bg-white py-2 z-10" style={{ color: 'var(--theme-text)' }}>
                     3. 請問您還有需要哪方面進一步的資源協助嗎？
                   </h3>
-                  
-                  <div className="flex flex-wrap gap-3">
-                    {resourceOptions.map(option => (
-                      <Card 
-                        key={option}
-                        className="hover:shadow-md transition-shadow cursor-pointer"
-                        style={{ 
-                          borderColor: formData.resources.has(option) 
-                            ? 'var(--theme-primary)' 
-                            : 'var(--theme-border)',
-                          borderWidth: '2px',
-                          background: formData.resources.has(option)
-                            ? 'var(--theme-surface)'
-                            : 'white',
-                          minWidth: option.length > 15 ? '280px' : 'auto'
-                        }}
-                      >
-                        <label className="flex items-center gap-2 px-3 py-2 cursor-pointer">
-                          <Checkbox
-                            checked={formData.resources.has(option)}
-                            onCheckedChange={() => handleCheckboxChange('resources', option)}
-                            className="w-4 h-4"
-                          />
-                          <span className="text-sm">{option}</span>
-                        </label>
-                      </Card>
-                    ))}
-                  </div>
+
+                  {/* 無選項 */}
+                  <Card className="p-3 border-2 inline-block" style={{ borderColor: 'var(--theme-border)' }}>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox
+                        checked={formData.resources.has('無')}
+                        onCheckedChange={() => handleCheckboxChange('resources', '無')}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-base font-medium">無需其他協助</span>
+                    </label>
+                  </Card>
+
+                  {/* 分類顯示 */}
+                  {Object.entries(groupedResource).map(([category, items]) => {
+                    if (category === '其他') return null
+
+                    return (
+                      <div key={category} className="space-y-2">
+                        <h4
+                          className="font-semibold text-base flex items-center gap-1"
+                          style={{ color: 'var(--theme-primary)' }}
+                        >
+                          <ChevronRight className="w-3 h-3" />
+                          {category}
+                        </h4>
+                        <div className="flex flex-wrap gap-3 pl-4">
+                          {items.map(item => (
+                            <Card
+                              key={item.value}
+                              className="hover:shadow-md transition-shadow cursor-pointer"
+                              style={{
+                                borderColor: formData.resources.has(item.value)
+                                  ? 'var(--theme-primary)'
+                                  : 'var(--theme-border)',
+                                borderWidth: '2px',
+                                background: formData.resources.has(item.value)
+                                  ? 'var(--theme-surface)'
+                                  : 'white'
+                              }}
+                            >
+                              <label className="flex items-center gap-2 px-3 py-2 cursor-pointer">
+                                <Checkbox
+                                  checked={formData.resources.has(item.value)}
+                                  onCheckedChange={() => handleCheckboxChange('resources', item.value)}
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-sm whitespace-nowrap">{item.label}</span>
+                              </label>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })}
                   
                   {formData.resources.has('其他') && (
-                    <div className="mt-4">
+                    <div className="mt-4 pl-4">
                       <Input
                         placeholder="請輸入其他資源協助..."
                         value={formData.resourcesOther}
                         onChange={(e) => setFormData(prev => ({ ...prev, resourcesOther: e.target.value }))}
                         className="w-full max-w-lg text-base"
-                        style={{ 
+                        style={{
                           borderColor: 'var(--theme-border)',
                           background: 'white'
                         }}
@@ -365,75 +498,108 @@ export function ResourceFormModal({ isOpen, onClose }: ResourceFormModalProps) {
             </div>
           </>
         ) : (
-          /* 感謝頁面 */
-          <div 
-            className="relative min-h-[600px] overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, var(--theme-gradient-from), var(--theme-gradient-via), var(--theme-gradient-to))'
-            }}
-          >
-            {/* 裝飾背景元素 */}
-            <div className="absolute top-0 left-0 w-48 h-48 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/3 translate-y-1/3" />
-            <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-white/5 rounded-full" />
-            
-            {/* 主要內容 */}
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-[600px] p-8">
+          /* 感謝頁面 - 使用與題目相同的結構 */
+          <>
+            {/* Header - 固定在頂部 */}
+            <div
+              className="px-6 py-4 text-white flex-shrink-0 relative"
+              style={{
+                background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))',
+              }}
+            >
+              <div>
+                <h2 className="text-xl font-bold mb-1">資源需求調查表</h2>
+                <div className="flex items-center gap-2 text-white/80 text-sm">
+                  <span>填寫完成</span>
+                </div>
+              </div>
+              {/* 關閉按鈕 */}
+              <button
+                onClick={handleClose}
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-white/20 transition-colors"
+                aria-label="關閉"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            {/* Content - 可滾動區域 */}
+            <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col items-center justify-center min-h-[500px]">
               {/* 成功勾選動畫 */}
-              <div className="mb-8">
-                <div 
-                  className="w-32 h-32 rounded-full flex items-center justify-center shadow-lg animate-pulse"
+              <div className="mb-6">
+                <div
+                  className="w-24 h-24 rounded-full flex items-center justify-center shadow-lg"
                   style={{
                     background: 'linear-gradient(135deg, white, var(--theme-surface))'
                   }}
                 >
-                  <div 
-                    className="w-24 h-24 rounded-full flex items-center justify-center"
+                  <div
+                    className="w-20 h-20 rounded-full flex items-center justify-center"
                     style={{
                       background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))'
                     }}
                   >
-                    <Check className="w-14 h-14 text-white stroke-[3]" />
+                    <Check className="w-12 h-12 text-white stroke-[3]" />
                   </div>
                 </div>
               </div>
 
               {/* 標題文字 */}
-              <div className="text-center mb-8">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: 'var(--theme-text)' }}>
+              <div className="text-center mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: 'var(--theme-text)' }}>
                   感謝您的回覆
                 </h2>
-                <p className="text-lg md:text-xl max-w-sm mx-auto" style={{ color: 'var(--theme-text)', opacity: 0.8 }}>
+                <p className="text-base md:text-lg max-w-sm mx-auto" style={{ color: 'var(--theme-text-secondary)' }}>
                   您的寶貴意見將幫助我們提供更好的服務
                 </p>
               </div>
 
               {/* Logo 和機構資訊 */}
-              <div className="mb-8">
-                <img src={logo} alt="雄i聊" className="w-24 h-24 mx-auto mb-4 object-contain" />
-                <div className="text-center space-y-2">
-                  <p className="text-lg font-bold" style={{ color: 'var(--theme-primary)' }}>
+              <div className="mb-6">
+                <img src={logo} alt="雄i聊" className="w-16 h-16 mx-auto mb-3 object-contain" />
+                <div className="text-center space-y-1">
+                  <p className="text-base font-bold" style={{ color: 'var(--theme-primary)' }}>
                     高雄市政府毒品防制局
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--theme-text)', opacity: 0.7 }}>
+                  <p className="text-sm" style={{ color: 'var(--theme-text-secondary)' }}>
                     關心您的健康與福祉
                   </p>
                 </div>
               </div>
 
+            </div>
+
+            {/* Footer - 固定在底部 */}
+            <div
+              className="px-6 py-3 border-t flex items-center justify-between flex-shrink-0"
+              style={{ borderColor: 'var(--theme-border)' }}
+            >
+              {/* Progress Dots - 全部完成 */}
+              <div className="flex gap-2">
+                {[1, 2, 3].map(step => (
+                  <div
+                    key={step}
+                    className="w-3 h-3 rounded-full transition-all duration-300"
+                    style={{
+                      backgroundColor: 'var(--theme-secondary)'
+                    }}
+                  />
+                ))}
+              </div>
+
               {/* 關閉按鈕 */}
-              <Button 
+              <Button
                 onClick={handleClose}
-                className="px-16 py-4 text-lg font-semibold text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+                className="px-8 py-2 text-white font-medium shadow-md hover:shadow-lg transition-all"
                 style={{
-                  background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))',
-                  borderRadius: '2rem'
+                  background: 'linear-gradient(135deg, var(--theme-primary), var(--theme-secondary))'
                 }}
               >
                 關閉
               </Button>
             </div>
-          </div>
+          </>
+
         )}
       </DialogContent>
     </Dialog>

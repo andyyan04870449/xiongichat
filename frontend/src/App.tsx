@@ -366,18 +366,12 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div 
-        className={`relative w-full h-full min-h-screen safe-area-inset transition-all duration-300 ${
-          keyboardVisible ? 'keyboard-visible' : ''
-        }`}
-      >
+      <div className="w-full h-full">
         {/* Theme Control - Debug功能，使用F12切換 */}
         {debugMode && <ThemeButton />}
 
         {/* Main App Content */}
-        <div className="w-full h-full min-h-screen">
-          {renderCurrentView()}
-        </div>
+        {renderCurrentView()}
       </div>
     </ThemeProvider>
   )
