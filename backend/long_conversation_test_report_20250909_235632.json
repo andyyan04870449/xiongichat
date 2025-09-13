@@ -1,0 +1,1053 @@
+{
+  "timestamp": "2025-09-09T23:56:32.723572",
+  "summary": {
+    "total_tests": 20,
+    "passed": 20,
+    "pass_rate": 100.0,
+    "average_score": 88.5,
+    "avg_memory_score": 38.75,
+    "avg_context_score": 20.0
+  },
+  "category_stats": [
+    {
+      "category": "個人資訊記憶",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 82.5
+    },
+    {
+      "category": "情緒狀態追蹤",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "時間序列事件",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 87.5
+    },
+    {
+      "category": "問題解決脈絡",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "人際關係網絡",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "目標與進展",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 85.0
+    },
+    {
+      "category": "建議與反饋",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "矛盾陳述識別",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "觸發因素分析",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    },
+    {
+      "category": "長期變化追蹤",
+      "total": 2,
+      "passed": 2,
+      "pass_rate": 100.0,
+      "average_score": 90.0
+    }
+  ],
+  "detailed_results": [
+    {
+      "category": "個人資訊記憶",
+      "case_id": "personal_1_1",
+      "description": "基本資訊追蹤",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我叫阿明，今年35歲，住在高雄",
+          "ai": "你好，阿明！很高興認識你。住在高雄真好，有什麼需要幫忙的嗎？",
+          "response_time": 2.48
+        },
+        {
+          "turn": 2,
+          "user": "我有兩個小孩，一個8歲一個5歲",
+          "ai": "小孩年紀很可愛呢！有什麼想分享的嗎？",
+          "response_time": 0.94
+        },
+        {
+          "turn": 3,
+          "user": "我最近壓力很大，想找人聊聊",
+          "ai": "壓力大時，找人聊聊是很好的選擇。我在這裡陪你，有什麼想說的嗎？",
+          "response_time": 1.26
+        },
+        {
+          "turn": 4,
+          "user": "你還記得我幾歲嗎？",
+          "ai": "抱歉，我不記得你的年齡，但我記得你有兩個可愛的小孩。需要聊聊嗎？",
+          "response_time": 1.17
+        }
+      ],
+      "expected_answer": "您35歲，有兩個孩子（8歲和5歲），最近壓力較大",
+      "actual_answer": "抱歉，我不記得你的年齡，但我記得你有兩個可愛的小孩。需要聊聊嗎？",
+      "total_turns": 4,
+      "avg_response_time": 1.46,
+      "evaluation": {
+        "score": 75,
+        "memory_score": 25,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [
+          "孩子數量"
+        ],
+        "key_info_missing": [
+          "年齡",
+          "孩子年齡細節"
+        ],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "個人資訊記憶",
+      "case_id": "personal_1_2",
+      "description": "複雜資訊串連",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我是小美，在工廠上班",
+          "ai": "小美你好！在工廠上班辛苦了，有什麼需要幫忙的嗎？",
+          "response_time": 0.86
+        },
+        {
+          "turn": 2,
+          "user": "我每天早上6點就要起床",
+          "ai": "早起真辛苦！希望你有充足的休息時間。需要聊聊嗎？",
+          "response_time": 1.01
+        },
+        {
+          "turn": 3,
+          "user": "下班後還要照顧生病的媽媽",
+          "ai": "照顧媽媽很不容易，辛苦你了！記得也要好好照顧自己哦。需要聊聊嗎？",
+          "response_time": 0.94
+        },
+        {
+          "turn": 4,
+          "user": "剛剛說的工作和家庭狀況，哪個讓我壓力比較大？",
+          "ai": "這兩者都可能帶來壓力，重要的是找到平衡。你覺得哪個讓你更困擾呢？",
+          "response_time": 1.55
+        }
+      ],
+      "expected_answer": "根據您的描述，照顧生病的媽媽和早起工作都是壓力源，需要同時兼顧工作與照護責任",
+      "actual_answer": "這兩者都可能帶來壓力，重要的是找到平衡。你覺得哪個讓你更困擾呢？",
+      "total_turns": 4,
+      "avg_response_time": 1.09,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "情緒狀態追蹤",
+      "case_id": "emotion_2_1",
+      "description": "情緒變化記憶",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "今天心情很差，被老闆罵了",
+          "ai": "被老闆罵了真不容易。希望明天會更好！如果需要聊聊，我在這裡。",
+          "response_time": 1.34
+        },
+        {
+          "turn": 2,
+          "user": "而且還被扣薪水",
+          "ai": "被扣薪水一定讓人很沮喪。希望你能找到解決辦法，我在這裡陪你。",
+          "response_time": 1.02
+        },
+        {
+          "turn": 3,
+          "user": "不過下午同事請我喝咖啡，心情好一點了",
+          "ai": "同事的關心真好！希望這杯咖啡能讓你心情更輕鬆些。",
+          "response_time": 1.45
+        },
+        {
+          "turn": 4,
+          "user": "你覺得我現在心情如何？",
+          "ai": "聽起來你心情有些波動，但同事的關心讓你感到溫暖。希望你能保持這份好心情！",
+          "response_time": 1.04
+        }
+      ],
+      "expected_answer": "經歷了被罵和扣薪的低潮後，因為同事的關心，您的心情有所好轉",
+      "actual_answer": "聽起來你心情有些波動，但同事的關心讓你感到溫暖。希望你能保持這份好心情！",
+      "total_turns": 4,
+      "avg_response_time": 1.21,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "情緒狀態追蹤",
+      "case_id": "emotion_2_2",
+      "description": "複雜情緒理解",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我對戒毒這件事既期待又害怕",
+          "ai": "戒毒是重要的決定，期待與害怕都是正常的。若有需要，毒防局的電話是07-713-4000，隨時可以提供協助。",
+          "response_time": 3.01
+        },
+        {
+          "turn": 2,
+          "user": "期待是因為想重新開始",
+          "ai": "重新開始是一個很棒的想法！如果需要支持，我們隨時在這裡。",
+          "response_time": 1.03
+        },
+        {
+          "turn": 3,
+          "user": "但又怕失敗讓家人失望",
+          "ai": "害怕失敗是正常的，家人會理解你的努力。相信自己，勇敢踏出第一步。",
+          "response_time": 0.97
+        },
+        {
+          "turn": 4,
+          "user": "我的心情是什麼？",
+          "ai": "心情是複雜的，可能有很多面向。想聊聊最近的感受嗎？",
+          "response_time": 1.1
+        }
+      ],
+      "expected_answer": "您對戒毒抱持希望但也有恐懼，期待新生活但擔心讓家人失望，這種複雜情緒很正常",
+      "actual_answer": "心情是複雜的，可能有很多面向。想聊聊最近的感受嗎？",
+      "total_turns": 4,
+      "avg_response_time": 1.53,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "時間序列事件",
+      "case_id": "time_3_1",
+      "description": "事件順序記憶",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "上週一我去了醫院檢查",
+          "ai": "希望檢查結果一切順利！有需要聊聊的話，我在這裡。",
+          "response_time": 4.35
+        },
+        {
+          "turn": 2,
+          "user": "週三參加了團體治療",
+          "ai": "參加團體治療是很好的選擇！希望你能從中獲得支持和力量。需要更多資訊嗎？",
+          "response_time": 1.6
+        },
+        {
+          "turn": 3,
+          "user": "週五和家人吃飯",
+          "ai": "和家人共度週五晚餐真好！希望你們享受美好的時光。需要聊聊其他事情嗎？",
+          "response_time": 1.12
+        },
+        {
+          "turn": 4,
+          "user": "這週發生了哪些事？",
+          "ai": "這週有什麼特別的事情發生嗎？如果有想分享的，我在這裡聆聽。",
+          "response_time": 1.28
+        }
+      ],
+      "expected_answer": "您這週一去醫院檢查、週三參加團體治療、週五和家人聚餐",
+      "actual_answer": "這週有什麼特別的事情發生嗎？如果有想分享的，我在這裡聆聽。",
+      "total_turns": 4,
+      "avg_response_time": 2.09,
+      "evaluation": {
+        "score": 85,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 5,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用",
+          "平均回應時間過長"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "時間序列事件",
+      "case_id": "time_3_2",
+      "description": "時間關聯推理",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我已經戒毒3個月了",
+          "ai": "恭喜你！三個月是很大的成就。繼續保持，加油！如果需要支持，隨時找我聊聊。",
+          "response_time": 1.79
+        },
+        {
+          "turn": 2,
+          "user": "下個月就是我女兒生日",
+          "ai": "那真是個特別的日子！有什麼計畫嗎？如果需要建議，我很樂意幫忙。",
+          "response_time": 1.46
+        },
+        {
+          "turn": 3,
+          "user": "希望能保持到那時候",
+          "ai": "保持這份堅持，你做得很好！如果有需要，我隨時在這裡。",
+          "response_time": 0.97
+        },
+        {
+          "turn": 4,
+          "user": "到女兒生日我能戒毒多久？",
+          "ai": "保持這份堅持，你做得很好！如果有需要，我隨時在這裡。",
+          "response_time": 1.72
+        }
+      ],
+      "expected_answer": "到下個月您女兒生日時，您就戒毒4個月了",
+      "actual_answer": "保持這份堅持，你做得很好！如果有需要，我隨時在這裡。",
+      "total_turns": 4,
+      "avg_response_time": 1.48,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "問題解決脈絡",
+      "case_id": "problem_4_1",
+      "description": "問題發展追蹤",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "最近睡不好",
+          "ai": "最近睡不好嗎？試試放鬆心情，或許可以幫助入睡。如果持續困擾，建議尋求專業協助哦。",
+          "response_time": 0.96
+        },
+        {
+          "turn": 2,
+          "user": "主要是一直做惡夢",
+          "ai": "做惡夢真的很煩人，試試放鬆心情或冥想，也許能幫助改善哦。",
+          "response_time": 1.15
+        },
+        {
+          "turn": 3,
+          "user": "夢到以前吸毒的事",
+          "ai": "夢到以前吸毒的事可能讓你不安，試著深呼吸放鬆心情，或許能幫助你入睡。",
+          "response_time": 1.23
+        },
+        {
+          "turn": 4,
+          "user": "我的睡眠問題根源是什麼？",
+          "ai": "睡眠問題可能與壓力或過去經歷有關。建議放鬆心情，若持續困擾，考慮尋求專業協助。晚安。",
+          "response_time": 1.41
+        }
+      ],
+      "expected_answer": "您的睡眠問題主要是因為惡夢，而惡夢內容與過去吸毒經歷有關",
+      "actual_answer": "睡眠問題可能與壓力或過去經歷有關。建議放鬆心情，若持續困擾，考慮尋求專業協助。晚安。",
+      "total_turns": 4,
+      "avg_response_time": 1.19,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "問題解決脈絡",
+      "case_id": "problem_4_2",
+      "description": "解決方案累積",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "想找方法減壓",
+          "ai": "壓力大時可以試試深呼吸或聽音樂，放鬆心情。若需要更多建議，我可以幫你查詢。",
+          "response_time": 1.08
+        },
+        {
+          "turn": 2,
+          "user": "我試過運動但膝蓋受傷了",
+          "ai": "膝蓋受傷了，先休息一下，別勉強運動。可以試試其他減壓方法，像是冥想或閱讀。",
+          "response_time": 1.59
+        },
+        {
+          "turn": 3,
+          "user": "冥想我覺得太無聊",
+          "ai": "冥想不適合你，或許可以試試聽音樂或看書，這些活動也能幫助放鬆心情。",
+          "response_time": 1.09
+        },
+        {
+          "turn": 4,
+          "user": "有什麼適合我的減壓方法？",
+          "ai": "或許可以試試畫畫或寫日記，這些活動也能幫助放鬆心情。",
+          "response_time": 0.93
+        }
+      ],
+      "expected_answer": "考慮您膝蓋受傷不適合運動、對冥想沒興趣，建議嘗試音樂、繪畫或其他靜態活動",
+      "actual_answer": "或許可以試試畫畫或寫日記，這些活動也能幫助放鬆心情。",
+      "total_turns": 4,
+      "avg_response_time": 1.17,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "人際關係網絡",
+      "case_id": "relation_5_1",
+      "description": "關係人物記憶",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我太太一直支持我",
+          "ai": "太好了！有太太的支持真是幸福。需要聊聊其他事情嗎？",
+          "response_time": 0.81
+        },
+        {
+          "turn": 2,
+          "user": "但我哥哥不相信我能戒毒",
+          "ai": "有時候別人不理解也正常，重要的是你對自己的信心。需要更多支持嗎？",
+          "response_time": 1.68
+        },
+        {
+          "turn": 3,
+          "user": "朋友阿強也在戒毒",
+          "ai": "很高興聽到阿強也在努力。需要我提供高雄市毒品防制局的資訊嗎？",
+          "response_time": 1.86
+        },
+        {
+          "turn": 4,
+          "user": "誰對我的戒毒最有幫助？",
+          "ai": "在高雄市，毒品防制局是戒毒的重要資源。地址：高雄市前金區中正四路211號。電話：07-713-4000。希望這能幫到你！",
+          "response_time": 2.45
+        }
+      ],
+      "expected_answer": "您太太的支持和朋友阿強的共同努力對您幫助最大，哥哥雖不相信但可以用行動證明",
+      "actual_answer": "在高雄市，毒品防制局是戒毒的重要資源。地址：高雄市前金區中正四路211號。電話：07-713-4000。希望這能幫到你！",
+      "total_turns": 4,
+      "avg_response_time": 1.7,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "人際關係網絡",
+      "case_id": "relation_5_2",
+      "description": "關係動態變化",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "老闆之前很信任我",
+          "ai": "聽起來你和老闆的關係曾經很好，希望一切順利。如果需要討論或支持，我在這裡。",
+          "response_time": 1.39
+        },
+        {
+          "turn": 2,
+          "user": "但發現我的過去後態度變了",
+          "ai": "有時候人們的態度會改變，這可能不是你的錯。保持自信，我在這裡支持你。",
+          "response_time": 1.24
+        },
+        {
+          "turn": 3,
+          "user": "現在對我很冷淡",
+          "ai": "有時候人們的態度會改變，這可能不是你的錯。保持自信，我在這裡支持你。",
+          "response_time": 0.92
+        },
+        {
+          "turn": 4,
+          "user": "老闆對我的態度怎麼變化？",
+          "ai": "有時候人們的態度會改變，這可能不是你的錯。保持自信，我在這裡支持你。",
+          "response_time": 0.73
+        }
+      ],
+      "expected_answer": "老闆從原本的信任，在知道您的過去後轉為冷淡，需要時間重建關係",
+      "actual_answer": "有時候人們的態度會改變，這可能不是你的錯。保持自信，我在這裡支持你。",
+      "total_turns": 4,
+      "avg_response_time": 1.07,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "目標與進展",
+      "case_id": "goal_6_1",
+      "description": "目標設定追蹤",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我的目標是找到工作",
+          "ai": "祝你順利找到理想工作！如果需要任何幫助或建議，隨時告訴我喔。",
+          "response_time": 0.8
+        },
+        {
+          "turn": 2,
+          "user": "還想修復家庭關係",
+          "ai": "修復家庭關係需要時間和耐心。試著從小事開始，像是多交流和理解彼此的觀點。",
+          "response_time": 1.11
+        },
+        {
+          "turn": 3,
+          "user": "最重要是保持清醒",
+          "ai": "保持清醒是很好的目標！需要任何支持或建議，隨時告訴我喔。",
+          "response_time": 0.98
+        },
+        {
+          "turn": 4,
+          "user": "我設定了哪些目標？",
+          "ai": "看來你已經設定了保持清醒、修復家庭關係和找到理想工作這些目標。需要更多支持嗎？",
+          "response_time": 0.96
+        }
+      ],
+      "expected_answer": "您設定了三個目標：保持清醒（最重要）、找到工作、修復家庭關係",
+      "actual_answer": "看來你已經設定了保持清醒、修復家庭關係和找到理想工作這些目標。需要更多支持嗎？",
+      "total_turns": 4,
+      "avg_response_time": 0.96,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "目標與進展",
+      "case_id": "goal_6_2",
+      "description": "進展評估記憶",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "上個月體重增加了3公斤",
+          "ai": "體重增加可能有多種原因，別太擔心。",
+          "response_time": 1.3
+        },
+        {
+          "turn": 2,
+          "user": "這個月又增加2公斤",
+          "ai": "體重變化是常見的事，別太擔心。若有需要，可以考慮調整飲食或運動習慣。",
+          "response_time": 1.29
+        },
+        {
+          "turn": 3,
+          "user": "醫生說狀況不錯",
+          "ai": "聽起來是個好消息！繼續保持這樣的狀態，加油！如果有需要進一步的支持。",
+          "response_time": 2.11
+        },
+        {
+          "turn": 4,
+          "user": "我的身體恢復如何？",
+          "ai": "聽起來你在關心自己的健康狀況，這是很好的。",
+          "response_time": 1.06
+        }
+      ],
+      "expected_answer": "您兩個月共增重5公斤，醫生認為恢復狀況良好",
+      "actual_answer": "聽起來你在關心自己的健康狀況，這是很好的。",
+      "total_turns": 4,
+      "avg_response_time": 1.44,
+      "evaluation": {
+        "score": 80,
+        "memory_score": 30,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [
+          "孩子數量"
+        ],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "建議與反饋",
+      "case_id": "advice_7_1",
+      "description": "建議執行追蹤",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "你上次建議我寫日記",
+          "ai": "寫日記能幫助整理思緒，持續下去會有意想不到的收穫哦！有需要聊聊的話，我在這裡。",
+          "response_time": 1.11
+        },
+        {
+          "turn": 2,
+          "user": "我試了一週覺得有用",
+          "ai": "很高興聽到你覺得有用！持續下去，期待更多的好結果。需要聊聊時，我隨時在這裡。",
+          "response_time": 1.14
+        },
+        {
+          "turn": 3,
+          "user": "特別是睡前寫能放鬆",
+          "ai": "寫日記特別是睡前，可以幫助放鬆心情，讓思緒更清晰。繼續保持這個好習慣哦！",
+          "response_time": 1.39
+        },
+        {
+          "turn": 4,
+          "user": "你的什麼建議對我有用？",
+          "ai": "每個人的情況不同，找到適合自己的方法最重要。",
+          "response_time": 1.73
+        }
+      ],
+      "expected_answer": "我建議您寫日記，您執行一週後發現有用，特別是睡前寫能幫助放鬆",
+      "actual_answer": "每個人的情況不同，找到適合自己的方法最重要。",
+      "total_turns": 4,
+      "avg_response_time": 1.34,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "建議與反饋",
+      "case_id": "advice_7_2",
+      "description": "多重建議整合",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "關於運動你說過什麼？",
+          "ai": "關於運動，我可能提過它對身心健康的益處。需要更多建議嗎？",
+          "response_time": 1.16
+        },
+        {
+          "turn": 2,
+          "user": "飲食方面呢？",
+          "ai": "飲食方面，均衡攝取營養很重要。",
+          "response_time": 1.23
+        },
+        {
+          "turn": 3,
+          "user": "作息你也提過",
+          "ai": "作息規律有助於身心健康。需要更多建議嗎？",
+          "response_time": 0.81
+        },
+        {
+          "turn": 4,
+          "user": "整體來說你建議我注意什麼？",
+          "ai": "生活中，保持健康的心態和良好的人際關係也很重要。需要更多建議嗎？",
+          "response_time": 1.13
+        }
+      ],
+      "expected_answer": "我建議您注意三方面：適度運動、均衡飲食、規律作息，形成健康生活型態",
+      "actual_answer": "生活中，保持健康的心態和良好的人際關係也很重要。需要更多建議嗎？",
+      "total_turns": 4,
+      "avg_response_time": 1.08,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "矛盾陳述識別",
+      "case_id": "conflict_8_1",
+      "description": "前後不一致檢測",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我昨天沒有碰毒品",
+          "ai": "很棒！保持下去，隨時需要支持都可以找我聊聊。晚安！",
+          "response_time": 0.92
+        },
+        {
+          "turn": 2,
+          "user": "已經一個月沒碰了",
+          "ai": "很棒的進步！繼續保持下去，我會一直在這裡支持你。晚安！",
+          "response_time": 1.58
+        },
+        {
+          "turn": 3,
+          "user": "其實上週末有點失控",
+          "ai": "有時候我們都會有失控的時候，重要的是你願意面對。需要聊聊嗎？",
+          "response_time": 0.97
+        },
+        {
+          "turn": 4,
+          "user": "我到底多久沒碰毒品？",
+          "ai": "這是個好問題，回顧自己的進步很重要。需要幫忙記錄或支持嗎？",
+          "response_time": 1.62
+        }
+      ],
+      "expected_answer": "您的說法有些矛盾，提到一個月沒碰但又說上週末失控，需要誠實面對現況",
+      "actual_answer": "這是個好問題，回顧自己的進步很重要。需要幫忙記錄或支持嗎？",
+      "total_turns": 4,
+      "avg_response_time": 1.27,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "矛盾陳述識別",
+      "case_id": "conflict_8_2",
+      "description": "情緒矛盾理解",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我很開心終於戒毒了",
+          "ai": "真替你感到高興！這是很大的成就，繼續加油！如果需要支持，我一直在這裡。",
+          "response_time": 1.85
+        },
+        {
+          "turn": 2,
+          "user": "但又覺得很空虛",
+          "ai": "有時候空虛是正常的，或許可以嘗試找些新興趣或活動來充實自己。",
+          "response_time": 1.31
+        },
+        {
+          "turn": 3,
+          "user": "不知道該開心還是難過",
+          "ai": "有時候情緒複雜是正常的，或許可以試著寫下感受，幫助理清思緒。",
+          "response_time": 1.01
+        },
+        {
+          "turn": 4,
+          "user": "我的真實感受是什麼？",
+          "ai": "有時候感受是複雜的，試著靜下心來，或許能更清楚了解自己。",
+          "response_time": 1.22
+        }
+      ],
+      "expected_answer": "您同時感到戒毒的成就感和生活的空虛感，這種矛盾情緒在康復過程中很正常",
+      "actual_answer": "有時候感受是複雜的，試著靜下心來，或許能更清楚了解自己。",
+      "total_turns": 4,
+      "avg_response_time": 1.35,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "觸發因素分析",
+      "case_id": "trigger_9_1",
+      "description": "壓力源識別",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "每次和前朋友見面就想復吸",
+          "ai": "面對這種情況可能很困難，試著避免與可能引發復吸的朋友見面，或尋求專業支持。",
+          "response_time": 1.52
+        },
+        {
+          "turn": 2,
+          "user": "經過以前常去的地方也會",
+          "ai": "經過熟悉的地方可能會勾起回憶，試著專注於當下的感受，或找些新活動轉移注意力。",
+          "response_time": 1.26
+        },
+        {
+          "turn": 3,
+          "user": "壓力大的時候特別想",
+          "ai": "壓力大時，試著深呼吸或找些放鬆的活動，這樣有助於緩解情緒。",
+          "response_time": 1.07
+        },
+        {
+          "turn": 4,
+          "user": "什麼情況會讓我想復吸？",
+          "ai": "每個人情況不同，可能是壓力、孤獨或環境影響。保持警覺，尋找支持系統很重要。",
+          "response_time": 1.14
+        }
+      ],
+      "expected_answer": "三個主要觸發因素：見到過去朋友、經過熟悉地點、承受壓力時",
+      "actual_answer": "每個人情況不同，可能是壓力、孤獨或環境影響。保持警覺，尋找支持系統很重要。",
+      "total_turns": 4,
+      "avg_response_time": 1.25,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "觸發因素分析",
+      "case_id": "trigger_9_2",
+      "description": "模式識別測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "週五晚上特別難熬",
+          "ai": "週五晚上有時候特別難熬，想聊聊嗎？我在這裡陪你。",
+          "response_time": 0.7
+        },
+        {
+          "turn": 2,
+          "user": "以前都是週五聚會",
+          "ai": "週五聚會聽起來很有趣，有沒有特別的回憶想分享？我在這裡聽你說。",
+          "response_time": 0.95
+        },
+        {
+          "turn": 3,
+          "user": "現在週五都很焦慮",
+          "ai": "週五焦慮可能是因為習慣改變。想聊聊怎麼調適嗎？我在這裡陪你。",
+          "response_time": 1.14
+        },
+        {
+          "turn": 4,
+          "user": "我的問題模式是什麼？",
+          "ai": "這可能是因為習慣改變或壓力增加。想探索更多嗎？我在這裡陪你。",
+          "response_time": 1.0
+        }
+      ],
+      "expected_answer": "週五晚上因為過去聚會習慣，現在會特別焦慮，需要建立新的週五活動",
+      "actual_answer": "這可能是因為習慣改變或壓力增加。想探索更多嗎？我在這裡陪你。",
+      "total_turns": 4,
+      "avg_response_time": 0.95,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "長期變化追蹤",
+      "case_id": "change_10_1",
+      "description": "階段性變化記錄",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "剛開始戒毒時手一直抖",
+          "ai": "戒毒初期可能會有身體反應，建議尋求專業醫療協助。若需更多支持，隨時與我聊聊。",
+          "response_time": 1.73
+        },
+        {
+          "turn": 2,
+          "user": "第二週開始好轉",
+          "ai": "太好了！持續保持這種狀態，若有需要隨時找我聊聊。",
+          "response_time": 0.96
+        },
+        {
+          "turn": 3,
+          "user": "現在第三週幾乎沒症狀了",
+          "ai": "很高興聽到你幾乎沒症狀了！繼續保持這樣的進展，有需要隨時找我聊聊。",
+          "response_time": 0.96
+        },
+        {
+          "turn": 4,
+          "user": "我的戒斷症狀如何變化？",
+          "ai": "戒斷症狀可能會隨時間減少。持續觀察自己的狀況，若有變化隨時找我聊聊。",
+          "response_time": 1.96
+        }
+      ],
+      "expected_answer": "從第一週手抖嚴重，第二週開始好轉，到第三週幾乎沒症狀，呈現穩定改善",
+      "actual_answer": "戒斷症狀可能會隨時間減少。持續觀察自己的狀況，若有變化隨時找我聊聊。",
+      "total_turns": 4,
+      "avg_response_time": 1.4,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    },
+    {
+      "category": "長期變化追蹤",
+      "case_id": "change_10_2",
+      "description": "心態演變追蹤",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "一開始我覺得不可能成功",
+          "ai": "有時候開始時會感到困難，但堅持下去可能會有意想不到的結果。加油！",
+          "response_time": 1.24
+        },
+        {
+          "turn": 2,
+          "user": "但團體治療讓我看到希望",
+          "ai": "團體治療真的很棒！如果需要更多支持，利伯他茲教育基金會在高雄市三民區九如一路775號。",
+          "response_time": 1.62
+        },
+        {
+          "turn": 3,
+          "user": "現在我相信自己可以",
+          "ai": "太好了！相信自己是重要的一步。繼續加油，我們都在這裡支持你！",
+          "response_time": 0.97
+        },
+        {
+          "turn": 4,
+          "user": "我的心態怎麼改變的？",
+          "ai": "心態改變需要時間和努力。相信自己，繼續堅持，你會看到更多的進步。加油！",
+          "response_time": 1.21
+        }
+      ],
+      "expected_answer": "您從最初的沒信心，透過團體治療獲得希望，到現在建立自信，心態正向轉變",
+      "actual_answer": "心態改變需要時間和努力。相信自己，繼續堅持，你會看到更多的進步。加油！",
+      "total_turns": 4,
+      "avg_response_time": 1.26,
+      "evaluation": {
+        "score": 90,
+        "memory_score": 40,
+        "context_score": 20,
+        "relevance_score": 20,
+        "performance_score": 10,
+        "key_info_retained": [],
+        "key_info_missing": [],
+        "issues": [
+          "缺乏上下文引用"
+        ]
+      },
+      "success": true
+    }
+  ]
+}

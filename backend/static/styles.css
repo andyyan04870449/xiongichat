@@ -936,6 +936,204 @@ body {
     }
 }
 
+/* Batch Upload Styles */
+.modal-extra-large {
+    max-width: 1200px !important;
+    width: 90%;
+}
+
+.batch-stats {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.batch-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.batch-stats .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.batch-stats .stat-value {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.global-settings {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.global-settings h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #495057;
+    font-size: 1rem;
+}
+
+.file-list-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.file-list-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.file-list-table th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 500;
+    color: #495057;
+}
+
+.file-list-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.file-list-table tr:hover {
+    background: #f8f9fa;
+}
+
+.file-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.file-type-badge.pdf { background: #dc3545; color: white; }
+.file-type-badge.image { background: #28a745; color: white; }
+.file-type-badge.text { background: #17a2b8; color: white; }
+.file-type-badge.document { background: #007bff; color: white; }
+.file-type-badge.other { background: #6c757d; color: white; }
+
+.file-status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.file-status.pending { background: #e3e3e3; color: #495057; }
+.file-status.uploading { background: #fff3cd; color: #856404; }
+.file-status.processing { background: #cfe2ff; color: #004085; }
+.file-status.completed { background: #d1e7dd; color: #0f5132; }
+.file-status.failed { background: #f8d7da; color: #721c24; }
+
+.upload-progress {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.progress-bar {
+    height: 24px;
+    background: #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #45a049);
+    transition: width 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+}
+
+.progress-text {
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.btn-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-small:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    padding: 0.5rem 1rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.9rem;
+    z-index: 10001;
+    animation: slideIn 0.3s ease;
+}
+
+.toast-success { background: #28a745; }
+.toast-error { background: #dc3545; }
+.toast-warning { background: #ffc107; color: #212529; }
+.toast-info { background: #17a2b8; }
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 /* 工具類 */
 .text-center {
     text-align: center;

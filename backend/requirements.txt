@@ -24,6 +24,11 @@ redis==5.0.1
 uuid==1.30
 Pillow>=10.0.0
 
+# File Processing
+openpyxl>=3.1.2  # Excel file support
+PyPDF2>=3.0.1  # PDF file support
+python-docx>=1.1.0  # Word document support
+
 # Vector Database
 pgvector==0.3.6
 numpy>=1.24.0

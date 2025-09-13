@@ -1,0 +1,126 @@
+{
+  "test_info": {
+    "session_id": "emotion_test_1757615495",
+    "user_id": "emotion_test_user",
+    "conversation_id": "cb77c74f-1b60-4418-a23c-74f0e49db650",
+    "timestamp": 1757615556,
+    "total_scenarios": 7
+  },
+  "accuracy": {
+    "emotion": "0/7 (0.0%)",
+    "risk": "5/7 (71.4%)",
+    "stage": "3/7 (42.9%)"
+  },
+  "performance": {
+    "avg_time": 7.74,
+    "max_time": 10.43,
+    "min_time": 3.86
+  },
+  "detailed_results": [
+    {
+      "stage": "打招呼",
+      "input": "嗨，你好",
+      "response": "嗨，你好！今天過得怎麼樣？",
+      "emotion": "平靜",
+      "risk_level": "low",
+      "care_stage": 1,
+      "is_upgrade": false,
+      "strategy_effectiveness": "unknown",
+      "upgrade_reason": "維持當前策略層次",
+      "processing_time": 3.86,
+      "expected_emotion": "neutral",
+      "expected_risk": "none",
+      "expected_stage": 1
+    },
+    {
+      "stage": "開始激動",
+      "input": "我真的很煩，今天發生了太多爛事！",
+      "response": "抱歉聽到你今天遇到這麼多麻煩事。想不想聊聊發生了什麼？",
+      "emotion": "焦慮",
+      "risk_level": "low",
+      "care_stage": 2,
+      "is_upgrade": false,
+      "strategy_effectiveness": "unknown",
+      "upgrade_reason": "維持當前策略層次",
+      "processing_time": 9.61,
+      "expected_emotion": "frustrated",
+      "expected_risk": "low",
+      "expected_stage": 1
+    },
+    {
+      "stage": "持續激動",
+      "input": "沒有人理解我！每個人都在針對我！我受夠了！",
+      "response": "哇，聽起來真的很不容易。感覺好像被誤解和孤立了，這種感覺很不好受。我在這裡陪著你，你不是一個人。我們可以一起想辦法，看看怎麼讓情況好轉一些。你覺得有什麼事情是我們可以一起做的嗎？",
+      "emotion": "焦慮",
+      "risk_level": "medium",
+      "care_stage": 2,
+      "is_upgrade": true,
+      "strategy_effectiveness": "unknown",
+      "upgrade_reason": "第1層策略重複使用，升級至第2層",
+      "processing_time": 8.72,
+      "expected_emotion": "angry",
+      "expected_risk": "medium",
+      "expected_stage": 2
+    },
+    {
+      "stage": "更加激動",
+      "input": "這個世界真的爛透了！我覺得一切都沒有意義！",
+      "response": "抱歉你有這樣的感受，這聽起來真的很艱難。即便在困難的時候，也許能找到一些小事讓你感到一絲安慰或是意義。考慮和信任的人聊聊或尋求專業支持，可能會有所幫助。你並不孤單，有人關心並願意幫助你。",
+      "emotion": "絕望",
+      "risk_level": "high",
+      "care_stage": 2,
+      "is_upgrade": true,
+      "strategy_effectiveness": "improving",
+      "upgrade_reason": "第1層策略重複使用，升級至第2層",
+      "processing_time": 8.32,
+      "expected_emotion": "despair",
+      "expected_risk": "high",
+      "expected_stage": 3
+    },
+    {
+      "stage": "開始緩和",
+      "input": "謝謝你聽我說話...我覺得稍微好一點了",
+      "response": "不客氣，能讓你感覺好一點我也很開心。接下來有什麼計畫嗎？希望能有些讓你放鬆的時光。",
+      "emotion": "焦慮",
+      "risk_level": "medium",
+      "care_stage": 2,
+      "is_upgrade": false,
+      "strategy_effectiveness": "unknown",
+      "upgrade_reason": "維持當前策略層次",
+      "processing_time": 10.43,
+      "expected_emotion": "calming",
+      "expected_risk": "medium",
+      "expected_stage": 2
+    },
+    {
+      "stage": "逐漸平靜",
+      "input": "你的建議真的很有幫助，我想我知道該怎麼做了",
+      "response": "太好了，聽到你有了方向真是令人開心。記得好好照顧自己，有需要時隨時找我聊聊。接下來有什麼計畫嗎？希望能有些讓你放鬆的時光。",
+      "emotion": "平靜",
+      "risk_level": "low",
+      "care_stage": 2,
+      "is_upgrade": false,
+      "strategy_effectiveness": "improving",
+      "upgrade_reason": "維持當前策略層次",
+      "processing_time": 7.7,
+      "expected_emotion": "hopeful",
+      "expected_risk": "low",
+      "expected_stage": 1
+    },
+    {
+      "stage": "完全平靜",
+      "input": "謝謝你今天陪我聊天，我感覺好多了",
+      "response": "不客氣，能讓你感覺好一點我也很開心。接下來有什麼計畫嗎？希望能有些讓你放鬆的時光。",
+      "emotion": "積極",
+      "risk_level": "low",
+      "care_stage": 2,
+      "is_upgrade": false,
+      "strategy_effectiveness": "improving",
+      "upgrade_reason": "維持當前策略層次",
+      "processing_time": 5.54,
+      "expected_emotion": "grateful",
+      "expected_risk": "none",
+      "expected_stage": 1
+    }
+  ]
+}

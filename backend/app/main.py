@@ -3,9 +3,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 import logging
 import sys
+from pathlib import Path
 from dotenv import load_dotenv
 
 # 載入環境變數
@@ -66,18 +68,34 @@ app.add_middleware(
 # 註冊路由
 app.include_router(api_router, prefix=settings.api_prefix)
 
-# 靜態檔案服務
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 
 @app.get("/")
 async def root():
-    """根路徑"""
-    return {
-        "service": "XiongIChat",
-        "version": "0.1.0",
-        "status": "running"
-    }
+    """根路徑 - 返回首頁"""
+    index_path = Path("static/index.html")
+    if index_path.exists():
+        return FileResponse(index_path)
+    else:
+        return {
+            "service": "XiongIChat",
+            "version": "0.1.0",
+            "status": "running",
+            "message": "Welcome! Visit /docs for API documentation"
+        }
+
+
+@app.get("/{filename}.html")
+async def serve_html(filename: str):
+    """提供 HTML 檔案服務"""
+    html_path = Path(f"static/{filename}.html")
+    if html_path.exists() and html_path.is_file():
+        return FileResponse(html_path)
+    else:
+        return FileResponse("static/index.html")  # 找不到時返回首頁
+
+
+# 靜態檔案服務（放在最後，避免覆蓋特定路由）
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/health")

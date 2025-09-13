@@ -1,0 +1,555 @@
+[
+  {
+    "id": 1,
+    "name": "直接詢問醫院資訊",
+    "difficulty": "簡單(1)",
+    "objective": "測試直接詢問特定醫院的檢索能力",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "高雄市立凱旋醫院的地址和電話是什麼？",
+        "ai": "",
+        "expected_keywords": [
+          "凱旋醫院",
+          "苓雅區",
+          "7513171"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "他們有提供什麼服務？",
+        "ai": "",
+        "expected_keywords": [
+          "藥癮",
+          "戒治",
+          "心理諮商"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "凱旋醫院",
+      "苓雅區",
+      "7513171",
+      "藥癮",
+      "戒治"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 2,
+    "name": "尋求戒毒協助",
+    "difficulty": "簡單(2)",
+    "objective": "測試一般求助的檢索能力",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我想要戒毒，該去哪裡？",
+        "ai": "",
+        "expected_keywords": [
+          "醫院",
+          "毒防中心"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "有哪些醫院可以選擇？",
+        "ai": "",
+        "expected_keywords": [
+          "凱旋",
+          "榮總",
+          "長庚"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "怎麼聯絡他們？",
+        "ai": "",
+        "expected_keywords": [
+          "電話",
+          "地址"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "醫院",
+      "毒防中心",
+      "門診",
+      "治療",
+      "電話"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 3,
+    "name": "美沙冬治療查詢",
+    "difficulty": "中等(3)",
+    "objective": "測試特定治療方式的檢索",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "聽說有一種替代療法可以治療海洛因成癮？",
+        "ai": "",
+        "expected_keywords": [
+          "美沙冬",
+          "替代療法"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "這個治療的原理是什麼？",
+        "ai": "",
+        "expected_keywords": [
+          "鴉片",
+          "減少",
+          "渴求"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "高雄哪裡可以做這個治療？",
+        "ai": "",
+        "expected_keywords": [
+          "民生醫院",
+          "凱旋"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "美沙冬",
+      "替代療法",
+      "民生醫院",
+      "鴉片",
+      "門診"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 4,
+    "name": "家屬求助",
+    "difficulty": "中等(4)",
+    "objective": "測試間接需求的理解與檢索",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我弟弟最近行為很奇怪，常常不回家，我懷疑他在吸毒",
+        "ai": "",
+        "expected_keywords": [
+          "毒防中心",
+          "醫院"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "家人可以做什麼？我們都很擔心",
+        "ai": "",
+        "expected_keywords": [
+          "家庭支持",
+          "諮商"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "我自己壓力也很大，快要崩潰了",
+        "ai": "",
+        "expected_keywords": [
+          "生命線",
+          "1995",
+          "心理"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "有政府單位可以協助嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "社會局",
+          "毒防中心"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "家庭支持",
+      "社會局",
+      "諮商",
+      "生命線",
+      "1995"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 5,
+    "name": "戒毒後就業",
+    "difficulty": "中等(5)",
+    "objective": "測試複合需求的檢索",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我已經戒毒三個月了，想要重新開始生活",
+        "ai": "",
+        "expected_keywords": [
+          "復歸",
+          "輔導"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "但是找工作很困難，雇主知道我的過去都不願意用我",
+        "ai": "",
+        "expected_keywords": [
+          "就業",
+          "職業"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "有沒有地方可以學一技之長？",
+        "ai": "",
+        "expected_keywords": [
+          "職業訓練",
+          "勞動部"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "或是有專門幫助我們這種人的機構？",
+        "ai": "",
+        "expected_keywords": [
+          "利伯他茲",
+          "晨曦會"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "職業訓練",
+      "就業",
+      "勞動部",
+      "利伯他茲",
+      "社會復歸"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 6,
+    "name": "憂鬱求助",
+    "difficulty": "困難(6)",
+    "objective": "測試隱晦求助的理解",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "最近心情很低落，覺得活著沒意思",
+        "ai": "",
+        "expected_keywords": [
+          "心理",
+          "諮商",
+          "精神科"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "晚上都睡不著，一直在想一些不好的事情",
+        "ai": "",
+        "expected_keywords": [
+          "精神科",
+          "醫院"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "有時候真的很想一了百了",
+        "ai": "",
+        "expected_keywords": [
+          "生命線",
+          "1995",
+          "自殺"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "現在是半夜，有人可以聊聊嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "24小時",
+          "1995"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "生命線",
+      "1995",
+      "心理諮商",
+      "精神科",
+      "24小時"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 7,
+    "name": "出獄更生",
+    "difficulty": "困難(7)",
+    "objective": "測試複雜背景的需求理解",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我下個月就要出來了",
+        "ai": "",
+        "expected_keywords": [
+          "出監",
+          "更生"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "在裡面待了兩年，外面的世界變化好大",
+        "ai": "",
+        "expected_keywords": [
+          "監獄",
+          "矯正"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "沒有地方住，家人也不理我了",
+        "ai": "",
+        "expected_keywords": [
+          "收容",
+          "安置",
+          "仁愛之家"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "獄方說有些機構可以幫忙？",
+        "ai": "",
+        "expected_keywords": [
+          "轉介",
+          "更生",
+          "社福"
+        ]
+      },
+      {
+        "turn": 5,
+        "user": "我真的想重新做人",
+        "ai": "",
+        "expected_keywords": [
+          "輔導",
+          "職業訓練"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "監獄",
+      "出監",
+      "轉介",
+      "更生",
+      "仁愛之家"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 8,
+    "name": "宗教戒毒",
+    "difficulty": "困難(8)",
+    "objective": "測試委婉表達的理解",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我朋友說信仰可以幫助戒癮，是真的嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "福音",
+          "基督教"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "他提到有些教會有在做這方面的服務",
+        "ai": "",
+        "expected_keywords": [
+          "晨曦會",
+          "沐恩之家"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "好像在鄉下地方？不是在市區",
+        "ai": "",
+        "expected_keywords": [
+          "梓官",
+          "中崙"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "他們是怎麼幫助人的？",
+        "ai": "",
+        "expected_keywords": [
+          "生命教育",
+          "福音戒毒"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "福音戒毒",
+      "晨曦會",
+      "沐恩之家",
+      "基督教",
+      "梓官"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 9,
+    "name": "法律問題",
+    "difficulty": "極難(9)",
+    "objective": "測試極度隱晦的需求理解",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "朋友昨天被抓了",
+        "ai": "",
+        "expected_keywords": [
+          "警察",
+          "法律"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "他身上有一些白色粉末，說是K",
+        "ai": "",
+        "expected_keywords": [
+          "K他命",
+          "毒品"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "這個會很嚴重嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "第三級",
+          "毒品危害防制條例"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "第一次被抓有什麼辦法嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "緩起訴",
+          "戒癮治療"
+        ]
+      },
+      {
+        "turn": 5,
+        "user": "要去哪個單位處理？",
+        "ai": "",
+        "expected_keywords": [
+          "地檢署",
+          "檢察官"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "毒品危害防制條例",
+      "第三級",
+      "K他命",
+      "緩起訴",
+      "地檢署"
+    ],
+    "score": 0.0,
+    "passed": false
+  },
+  {
+    "id": 10,
+    "name": "多重需求",
+    "difficulty": "極難(10)",
+    "objective": "測試多重隱含需求的理解",
+    "conversation_log": [
+      {
+        "turn": 1,
+        "user": "我朋友最近瘦了很多，眼睛都凹陷了",
+        "ai": "",
+        "expected_keywords": [
+          "安非他命",
+          "毒品"
+        ]
+      },
+      {
+        "turn": 2,
+        "user": "他說他想停但是停不下來，一停就全身不舒服",
+        "ai": "",
+        "expected_keywords": [
+          "戒斷",
+          "症狀",
+          "成癮"
+        ]
+      },
+      {
+        "turn": 3,
+        "user": "聽說左營有家大醫院不錯？",
+        "ai": "",
+        "expected_keywords": [
+          "榮總",
+          "左營"
+        ]
+      },
+      {
+        "turn": 4,
+        "user": "他們有專門的科別嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "成癮醫學",
+          "精神科"
+        ]
+      },
+      {
+        "turn": 5,
+        "user": "治療要花很多錢嗎？他現在沒工作",
+        "ai": "",
+        "expected_keywords": [
+          "社會局",
+          "補助",
+          "急難救助"
+        ]
+      },
+      {
+        "turn": 6,
+        "user": "治好後能幫他找工作嗎？",
+        "ai": "",
+        "expected_keywords": [
+          "職業訓練",
+          "就業輔導"
+        ]
+      }
+    ],
+    "keywords_found": [],
+    "expected_keywords": [
+      "安非他命",
+      "戒斷",
+      "症狀",
+      "榮總",
+      "成癮醫學",
+      "職業訓練",
+      "社會局"
+    ],
+    "score": 0.0,
+    "passed": false
+  }
+]

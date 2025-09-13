@@ -38,18 +38,23 @@ class MediaUploadRequest(BaseModel):
 class ContactsUploadRequest(BaseModel):
     """聯絡人上傳請求"""
     field_mapping: Optional[Dict[str, str]] = Field(default_factory=dict, description="欄位映射")
+    use_llm: bool = Field(default=True, description="是否使用 LLM 自動辨識聯絡人資訊")
     
     @validator('field_mapping')
-    def validate_field_mapping(cls, v):
-        if v is not None:
+    def validate_field_mapping(cls, v, values):
+        # 如果使用 LLM，不需要驗證 field_mapping
+        use_llm = values.get('use_llm', True)
+        
+        # 只有當不使用 LLM 且有映射時才驗證
+        if not use_llm and v is not None and v:
             # organization 是必填欄位
             if 'organization' not in v.values():
-                raise ValueError('必須包含 organization（機構）欄位')
+                raise ValueError('不使用 LLM 時必須包含 organization（機構）欄位')
             # phone 或 email 至少需要一個
             contact_fields = ['phone', 'email']
             has_contact = any(field in v.values() for field in contact_fields)
             if not has_contact:
-                raise ValueError('必須包含 phone 或 email 其中一個欄位')
+                raise ValueError('不使用 LLM 時必須包含 phone 或 email 其中一個欄位')
         return v
 
 

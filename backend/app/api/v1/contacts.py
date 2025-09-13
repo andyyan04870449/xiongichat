@@ -54,6 +54,60 @@ class ContactResponse(BaseModel):
     updated_at: datetime
 
 
+@router.get("/contacts/authoritative")
+async def get_authoritative_contacts(
+    search: Optional[str] = None,
+    limit: int = 1000,
+    offset: int = 0
+):
+    """取得權威機構聯絡資訊列表（用於前端展示）"""
+    try:
+        async with get_db_context() as db:
+            query = select(AuthoritativeContacts)
+            
+            # 搜尋條件
+            if search:
+                search_pattern = f"%{search}%"
+                query = query.where(
+                    or_(
+                        AuthoritativeContacts.organization.ilike(search_pattern),
+                        AuthoritativeContacts.phone.ilike(search_pattern),
+                        AuthoritativeContacts.email.ilike(search_pattern),
+                        AuthoritativeContacts.address.ilike(search_pattern),
+                        AuthoritativeContacts.notes.ilike(search_pattern)
+                    )
+                )
+            
+            # 排序和分頁
+            query = query.order_by(AuthoritativeContacts.organization)
+            query = query.offset(offset).limit(limit)
+            
+            result = await db.execute(query)
+            contacts = result.scalars().all()
+            
+            return {
+                "contacts": [
+                    {
+                        "id": str(contact.id),
+                        "name": contact.organization,
+                        "category": contact.tags[0] if contact.tags and len(contact.tags) > 0 else "其他",
+                        "phone": contact.phone,
+                        "email": contact.email,
+                        "address": contact.address,
+                        "services": contact.notes,
+                        "contact_person": None,  # 如果有此欄位可以加上
+                        "tags": contact.tags or []
+                    }
+                    for contact in contacts
+                ],
+                "total": len(contacts)
+            }
+            
+    except Exception as e:
+        logger.error(f"取得權威機構聯絡資訊失敗: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/contacts", response_model=List[ContactResponse])
 async def get_contacts(
     search: Optional[str] = None,

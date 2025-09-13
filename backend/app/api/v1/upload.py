@@ -75,13 +75,15 @@ async def upload_media(
 async def upload_contacts(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    field_mapping: Optional[str] = Form(None)
+    field_mapping: Optional[str] = Form(None),
+    use_llm: bool = Form(True)
 ):
     """上傳聯絡人檔案"""
     try:
-        # 驗證檔案類型
-        if not file.filename.endswith(('.csv', '.xlsx', '.json')):
-            raise HTTPException(status_code=400, detail="不支援的檔案類型，請使用 CSV、Excel 或 JSON 格式")
+        # 驗證檔案類型 - 支援更多格式
+        supported_extensions = ('.csv', '.xlsx', '.xls', '.json', '.txt', '.md', '.pdf', '.doc', '.docx')
+        if not file.filename.lower().endswith(supported_extensions):
+            raise HTTPException(status_code=400, detail=f"不支援的檔案類型，請使用以下格式之一：{', '.join(supported_extensions)}")
         
         # 解析欄位映射
         mapping_dict = {}
@@ -97,11 +99,11 @@ async def upload_contacts(
             filename=file.filename,
             upload_type=UploadType.AUTHORITY_CONTACTS,
             file_size=file.size,
-            metadata={"field_mapping": mapping_dict}
+            metadata={"field_mapping": mapping_dict, "use_llm": use_llm}
         )
         
         # 建立請求物件
-        request = ContactsUploadRequest(field_mapping=mapping_dict)
+        request = ContactsUploadRequest(field_mapping=mapping_dict, use_llm=use_llm)
         
         # 先讀取檔案內容（在背景任務執行前）
         file_content = await file.read()

@@ -1,7 +1,7 @@
 """對話記錄節點"""
 
 from datetime import datetime
-from uuid import uuid4
+from uuid import uuid4, UUID
 import logging
 from typing import Optional
 
@@ -41,6 +41,25 @@ class ConversationLoggerNode:
                 await db.flush()
                 state["user_message_id"] = str(user_message.id)
                 
+                # 準備策略元數據
+                intent_analysis = state.get("intent_analysis", {})
+                strategy_meta = {
+                    "care_stage_used": intent_analysis.get("care_stage_needed", 2),
+                    "risk_level": intent_analysis.get("risk_level", "none"),
+                    "intent": intent_analysis.get("intent", "一般對話"),
+                    "strategy_effectiveness": intent_analysis.get("strategy_effectiveness", "unknown"),
+                    "upgrade_reason": intent_analysis.get("upgrade_reason", ""),
+                    "is_upgrade": intent_analysis.get("is_upgrade", False),
+                    "treatment_progress": intent_analysis.get("treatment_progress", "initial"),
+                    "previous_stages_tried": intent_analysis.get("previous_stages_tried", []),
+                    "emotion_trend": intent_analysis.get("emotion_trend", "unknown"),
+                    "confidence_level": intent_analysis.get("confidence_level", 0.7),
+                    "used_knowledge": bool(state.get("knowledge", "")),
+                    "used_reference": bool(state.get("reference_answer", "")),
+                    "response_length": len(state.get("reply", "")),
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+                
                 # 儲存助手回覆（使用稍微晚一點的時間戳確保順序）
                 from datetime import timedelta
                 assistant_time = user_time + timedelta(microseconds=1)
@@ -48,6 +67,7 @@ class ConversationLoggerNode:
                     conversation_id=conversation.id,
                     role="assistant",
                     content=state.get("reply", ""),
+                    meta=strategy_meta,  # 存儲策略元數據
                     created_at=assistant_time,
                 )
                 db.add(assistant_message)
@@ -79,22 +99,47 @@ class ConversationLoggerNode:
         """取得或建立對話"""
         
         if conversation_id:
-            # 查詢現有對話
-            stmt = select(Conversation).where(
-                Conversation.id == conversation_id,
-                Conversation.user_id == user_id
-            )
-            result = await db.execute(stmt)
-            conversation = result.scalar_one_or_none()
-            
-            if conversation:
-                return conversation
+            try:
+                # 將字串轉換為 UUID 對象
+                conversation_uuid = UUID(conversation_id) if isinstance(conversation_id, str) else conversation_id
+                
+                # 查詢現有對話
+                stmt = select(Conversation).where(
+                    Conversation.id == conversation_uuid,
+                    Conversation.user_id == user_id
+                )
+                result = await db.execute(stmt)
+                conversation = result.scalar_one_or_none()
+                
+                if conversation:
+                    logger.info(f"Found existing conversation {conversation_id} for user {user_id}")
+                    return conversation
+                else:
+                    logger.warning(f"Conversation {conversation_id} not found for user {user_id}, creating new one")
+            except (ValueError, TypeError) as e:
+                logger.error(f"Invalid conversation_id format: {conversation_id}, error: {e}")
         
-        # 建立新對話
-        conversation = Conversation(
-            user_id=user_id,
-            started_at=datetime.utcnow(),
-        )
+        # 建立新對話，如果有指定的 conversation_id 就使用它
+        if conversation_id:
+            try:
+                conversation_uuid = UUID(conversation_id) if isinstance(conversation_id, str) else conversation_id
+                conversation = Conversation(
+                    id=conversation_uuid,
+                    user_id=user_id,
+                    started_at=datetime.utcnow(),
+                )
+            except (ValueError, TypeError):
+                # 如果 conversation_id 格式不正確，創建新的
+                conversation = Conversation(
+                    user_id=user_id,
+                    started_at=datetime.utcnow(),
+                )
+        else:
+            conversation = Conversation(
+                user_id=user_id,
+                started_at=datetime.utcnow(),
+            )
+        
         db.add(conversation)
         await db.flush()
         

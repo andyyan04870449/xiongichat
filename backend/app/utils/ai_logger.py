@@ -156,14 +156,23 @@ class AIAnalysisLogger:
                 "session_id": self.session_id
             })
     
-    def log_response_generation(self, response: str, used_knowledge: bool):
-        """記錄回應生成"""
+    def log_response_generation(self, response: str, used_knowledge: bool, 
+                               response_type: str = None, length_limit: int = None):
+        """記錄回應生成（增強版：包含字數限制監控）"""
         timing = self._record_stage_timing("RESPONSE_GENERATION")
-        self.logger.info("✍️ Response Generated", extra={
+        response_length = len(response)
+        
+        # 判斷是否符合限制
+        within_limit = response_length <= length_limit if length_limit else True
+        
+        self.logger.info(f"✍️ Response Generated [{response_type or '一般對話'}]", extra={
             "stage": "RESPONSE_GENERATION",
             "response": response,
+            "response_type": response_type or "一般對話",
             "used_knowledge": used_knowledge,
-            "response_length": len(response),
+            "response_length": response_length,
+            "length_limit": length_limit,
+            "within_limit": within_limit,
             "session_id": self.session_id,
             "stage_time_ms": timing
         })
@@ -181,11 +190,37 @@ class AIAnalysisLogger:
             "stage_time_ms": timing
         })
     
-    def log_final_response(self, final_response: str, processing_time: float):
-        """記錄最終回應"""
-        self.logger.info("🎯 === FINAL RESPONSE ===", extra={
+    def log_length_management(self, original_text: str, final_text: str, 
+                             content_type: str, limit: int, truncated: bool = False):
+        """記錄字數管理處理"""
+        original_length = len(original_text)
+        final_length = len(final_text)
+        
+        self.logger.info(f"📏 Length Management [{content_type}]", extra={
+            "stage": "LENGTH_MANAGEMENT",
+            "content_type": content_type,
+            "original_length": original_length,
+            "final_length": final_length,
+            "length_limit": limit,
+            "truncated": truncated,
+            "reduction_percent": round((1 - final_length/original_length) * 100, 1) if truncated else 0,
+            "within_limit": final_length <= limit,
+            "session_id": self.session_id
+        })
+    
+    def log_final_response(self, final_response: str, processing_time: float,
+                          response_type: str = None, length_limit: int = None):
+        """記錄最終回應（增強版）"""
+        response_length = len(final_response)
+        within_limit = response_length <= length_limit if length_limit else True
+        
+        self.logger.info(f"🎯 === FINAL RESPONSE [{response_type or '一般對話'}] ===", extra={
             "stage": "FINAL_RESPONSE",
             "response": final_response,
+            "response_type": response_type or "一般對話",
+            "response_length": response_length,
+            "length_limit": length_limit,
+            "within_limit": within_limit,
             "processing_time_seconds": processing_time,
             "stage_timings": self.stage_timings,
             "total_stages": len(self.stage_timings),
@@ -335,13 +370,32 @@ class ReadableFormatter(logging.Formatter):
                 return f"[{timestamp}] 🔍 知識檢索{timing_info}\n查詢: {record.query}\n結果: {record.results_count} 筆\n"
             
             elif stage == "RESPONSE_GENERATION":
-                return f"[{timestamp}] ✍️ 生成回應{timing_info}\n使用知識: {'是' if record.used_knowledge else '否'}\n長度: {record.response_length} 字\n"
+                # 增強版：顯示內容類型和限制
+                type_info = f" [{record.response_type}]" if hasattr(record, 'response_type') else ""
+                limit_info = ""
+                if hasattr(record, 'length_limit') and record.length_limit:
+                    status = "✅" if record.within_limit else "⚠️"
+                    limit_info = f"\n限制: {record.length_limit} 字 {status}"
+                return f"[{timestamp}] ✍️ 生成回應{timing_info}{type_info}\n使用知識: {'是' if record.used_knowledge else '否'}\n長度: {record.response_length} 字{limit_info}\n"
             
             elif stage == "RESPONSE_VALIDATION":
                 status = "✅ 通過" if record.is_valid else f"⚠️ 修改 ({record.severity})"
                 return f"[{timestamp}] ✅ 回應驗證{timing_info}: {status}\n"
             
+            elif stage == "LENGTH_MANAGEMENT":
+                # 新增：字數管理監控
+                truncated_info = " (已截斷)" if record.truncated else ""
+                status = "✅" if record.within_limit else "⚠️"
+                return f"[{timestamp}] 📏 字數管理 [{record.content_type}]{truncated_info}\n原始: {record.original_length}字 → 最終: {record.final_length}字 (限制: {record.length_limit}字) {status}\n"
+            
             elif stage == "FINAL_RESPONSE":
+                # 增強版：顯示內容類型和字數資訊
+                type_info = f" [{record.response_type}]" if hasattr(record, 'response_type') else ""
+                length_info = ""
+                if hasattr(record, 'response_length') and hasattr(record, 'length_limit'):
+                    status = "✅" if record.within_limit else "⚠️"
+                    length_info = f"\n📝 長度: {record.response_length}字 / 限制: {record.length_limit}字 {status}"
+                
                 # 顯示各階段耗時統計
                 stage_summary = ""
                 if hasattr(record, 'stage_timings') and record.stage_timings:
@@ -351,7 +405,7 @@ class ReadableFormatter(logging.Formatter):
                     total_tracked = sum(record.stage_timings.values())
                     stage_summary += f"  - 總計: {total_tracked:.0f}ms\n"
                 
-                return f"[{timestamp}] 🎯 最終回應\n{record.response}\n{stage_summary}總處理時間: {record.processing_time_seconds:.2f}秒\n{'='*80}\n"
+                return f"[{timestamp}] 🎯 最終回應{type_info}\n{record.response}{length_info}\n{stage_summary}總處理時間: {record.processing_time_seconds:.2f}秒\n{'='*80}\n"
             
             elif stage.startswith("ERROR"):
                 return f"[{timestamp}] ❌ 錯誤{timing_info} ({record.error_type})\n階段: {stage}\n訊息: {record.error_message}\n"

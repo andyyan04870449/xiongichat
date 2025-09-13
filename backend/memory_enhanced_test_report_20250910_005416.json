@@ -1,0 +1,64 @@
+{
+  "test_info": {
+    "timestamp": "2025-09-10T00:54:16.880263",
+    "total_test_cases": 16,
+    "successful_cases": 0,
+    "overall_success_rate": 0.0,
+    "overall_average_score": 0
+  },
+  "category_statistics": {
+    "個人資訊記憶": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "情緒狀態追蹤": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "時間序列事件": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "問題解決脈絡": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "人際關係網絡": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "目標與進展": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "建議與反饋": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    },
+    "矛盾陳述識別": {
+      "total_cases": 2,
+      "successful_cases": 0,
+      "success_rate": 0,
+      "average_score": 0
+    }
+  },
+  "detailed_results": [
+    {
+      "category": "個人資訊記憶",
+      "case_id": "personal_1_1",
+      "description": "基本資訊追蹤",
+      "conversation_id": 

@@ -1,0 +1,26 @@
+{
+  "test_info": {
+    "timestamp": "2025-09-10T01:25:29.477318",
+    "test_type": "quick_memory_verification",
+    "total_cases": 1,
+    "successful_cases": 0,
+    "success_rate": 0.0
+  },
+  "detailed_results": [
+    {
+      "user": "memory_verify_test_user",
+      "success": false,
+      "error": null,
+      "responses": [
+        {
+          "message": "你好，我叫小明",
+          "response": "無回應"
+        },
+        {
+          "message": "我還記得我告訴過你我叫什麼嗎？",
+          "response": "無回應"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "timestamp": "2025-09-09T23:38:14.498703",
+  "total_tests": 5,
+  "successful": 5,
+  "results": [
+    {
+      "case_name": "個人資訊記憶測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我叫阿明，今年35歲",
+          "ai": "嗨，阿明！這麼晚了還不睡嗎？有什麼想聊的嗎？",
+          "response_time": 0.98
+        },
+        {
+          "turn": 2,
+          "user": "我有兩個小孩",
+          "ai": "小孩是生活中的大寶貝！有什麼想和我分享的嗎？",
+          "response_time": 0.94
+        },
+        {
+          "turn": 3,
+          "user": "你記得我幾歲嗎？",
+          "ai": "抱歉，我不記得你的年齡。不過，我很樂意聽你分享更多！",
+          "response_time": 0.93
+        }
+      ],
+      "total_turns": 3,
+      "success": true
+    },
+    {
+      "case_name": "情緒追蹤測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "今天心情很差",
+          "ai": "抱歉聽到你心情不好。希望明天會更好！如果需要聊聊，我在這裡。",
+          "response_time": 0.99
+        },
+        {
+          "turn": 2,
+          "user": "被老闆罵了",
+          "ai": "被老闆罵了真不容易。希望你能找到放鬆的方式，我在這裡陪你。",
+          "response_time": 0.93
+        },
+        {
+          "turn": 3,
+          "user": "不過現在好一點了",
+          "ai": "聽到你感覺好一點了，我很高興！有需要時隨時找我聊聊。",
+          "response_time": 0.95
+        },
+        {
+          "turn": 4,
+          "user": "我的心情怎麼樣？",
+          "ai": "你的心情如何呢？如果想聊聊，我隨時在這裡。",
+          "response_time": 0.82
+        }
+      ],
+      "total_turns": 4,
+      "success": true
+    },
+    {
+      "case_name": "事件記憶測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "週一我去了醫院",
+          "ai": "希望你在醫院的經歷一切順利。如果有需要聊聊的，隨時告訴我哦！",
+          "response_time": 1.09
+        },
+        {
+          "turn": 2,
+          "user": "週三參加團體治療",
+          "ai": "希望團體治療對你有幫助！如果有需要聊聊的，隨時告訴我哦！",
+          "response_time": 1.67
+        },
+        {
+          "turn": 3,
+          "user": "週五和家人吃飯",
+          "ai": "和家人共度週五晚餐真好！希望你們有個溫馨的時光。如果有需要聊聊的，隨時告訴我哦！",
+          "response_time": 1.19
+        },
+        {
+          "turn": 4,
+          "user": "這週我做了什麼？",
+          "ai": "這週你和家人共度了週五晚餐，還有其他特別的事情嗎？如果想聊聊，隨時告訴我哦！",
+          "response_time": 0.99
+        }
+      ],
+      "total_turns": 4,
+      "success": true
+    },
+    {
+      "case_name": "戒毒進展測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我已經戒毒3個月了",
+          "ai": "恭喜你！三個月是很大的成就。繼續保持，加油！如果需要支持，隨時可以找我聊聊。",
+          "response_time": 3.2
+        },
+        {
+          "turn": 2,
+          "user": "下個月是我女兒生日",
+          "ai": "這是個特別的時刻！有什麼計畫來慶祝她的生日嗎？",
+          "response_time": 1.07
+        },
+        {
+          "turn": 3,
+          "user": "到女兒生日我戒毒多久了？",
+          "ai": "這是個值得紀念的時刻！你已經戒毒四個月了，繼續加油！有什麼特別的慶祝計畫嗎？",
+          "response_time": 1.52
+        }
+      ],
+      "total_turns": 3,
+      "success": true
+    },
+    {
+      "case_name": "關係記憶測試",
+      "conversation_history": [
+        {
+          "turn": 1,
+          "user": "我太太很支持我",
+          "ai": "聽起來你有個很棒的支持系統！有什麼想分享的嗎？",
+          "response_time": 1.26
+        },
+        {
+          "turn": 2,
+          "user": "但哥哥不相信我",
+          "ai": "有時候被誤解真的很難受。也許可以試著和哥哥坦誠溝通，讓他了解你的想法。",
+          "response_time": 1.41
+        },
+        {
+          "turn": 3,
+          "user": "朋友阿強也在戒毒",
+          "ai": "很高興聽到阿強也在努力戒毒！如果需要支援或資訊，可以聯絡高雄市毒品防制局，電話：07-713-4000。",
+          "response_time": 2.12
+        },
+        {
+          "turn": 4,
+          "user": "誰對我幫助最大？",
+          "ai": "每個人都可能在不同時刻對你有幫助。重要的是找到那些真正關心你的人。",
+          "response_time": 1.2
+        }
+      ],
+      "total_turns": 4,
+      "success": true
+    }
+  ]
+}

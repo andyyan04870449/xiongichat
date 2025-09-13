@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 from uuid import UUID, uuid4
 from sqlalchemy import Column, String, DateTime, ForeignKey, Text, CheckConstraint
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy.dialects.postgresql import UUID as PGUUID, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -48,6 +48,7 @@ class ConversationMessage(Base):
     conversation_id = Column(PGUUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False, index=True)
     role = Column(String, nullable=False)
     content = Column(Text, nullable=False)
+    meta = Column(JSON, nullable=True)  # 存儲策略追蹤和其他擴展數據
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     
     # 關聯
@@ -64,5 +65,6 @@ class ConversationMessage(Base):
             "conversation_id": str(self.conversation_id),
             "role": self.role,
             "content": self.content,
+            "meta": self.meta,  # JSON數據直接返回
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }
