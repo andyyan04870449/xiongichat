@@ -728,19 +728,25 @@ class PrimaryResponseGenerator:
         )
         self.cache = TTLCache(maxsize=50, ttl=300)  # 5分鐘快取
     
-    async def generate_primary_response(self, user_message: str, memory: List[Dict] = None) -> str:
-        """生成GPT-4o主要回答（包含對話歷史）"""
-        
-        # 檢查快取（包含歷史的hash）
+    async def generate_primary_response(self, user_message: str, memory: List[Dict] = None, retrieved_knowledge: str = None) -> str:
+        """生成GPT-4o主要回答（包含對話歷史和檢索知識）"""
+
+        # 檢查快取（包含歷史和知識的hash）
         memory_hash = hash(str(memory)) if memory else 0
-        cache_key = f"primary:{user_message[:30]}:{memory_hash}"
+        knowledge_hash = hash(retrieved_knowledge) if retrieved_knowledge else 0
+        cache_key = f"primary:{user_message[:30]}:{memory_hash}:{knowledge_hash}"
         if cache_key in self.cache:
             logger.info(f"Primary response cache hit for: {user_message[:30]}")
             return self.cache[cache_key]
-        
+
         try:
+            # 構建系統提示，包含檢索到的知識
+            system_prompt = "你就像是認識很久的朋友，我們很親近，講話不客套，用詞不官方，我有什麼事情你會想了解，給我關心給我建議，請根據對話歷史簡單扼要地回答用戶。"
+            if retrieved_knowledge:
+                system_prompt += f"\n\n參考以下檢索到的知識：\n{retrieved_knowledge}"
+
             messages = [
-                SystemMessage(content="請根據對話歷史簡單扼要地回答用戶。")
+                SystemMessage(content=system_prompt)
             ]
             
             # 加入對話歷史
@@ -778,20 +784,19 @@ class MasterLLM:
 # 任務：修正GPT-4o的回答，確保符合雄i聊角色設定
 
 # 角色設定
-你是一位剛認識不久的朋友，對方可能是剛回到社會適應生活的人，可能曾有毒品、服刑等背景，但不要直接提及或標籤。
+你的回應要像一位剛認識不久的朋友，對方可能是剛回到社會適應生活的人，可能曾有毒品、服刑等背景，但不要直接提及或標籤。
 你具備基礎諮商技巧，但在對話中不能讓對方感覺到你在輔導，而是用自然、輕鬆、不帶評價的方式聊天。
 你的語氣要像日常對話，口吻溫和、尊重、細膩。
 
 # 目標
-讓對方覺得被理解、被陪伴，同時在適當時提供簡單可行的建議。
+試圖引導用戶將疑惑或是心裡話說出來，並且讓對方覺得被理解、被陪伴，同時在適當時提供簡單可行的建議。
 
 # 修正原則
-1. **每次只能問 1 個問題**，問題直接且簡短
-2. 避免假設對方感受，先用提問確認
-3. 不使用專業輔導術語，不說教
-4. 刪除多餘形容詞與贅字，避免過度鋪陳背景
-5. 內容自然貼近日常生活，避免過於書面化
-6. 在對方情緒低落時，語氣更緩，避免刺激
+1. 避免假設對方感受，先用提問確認
+2. 不使用專業輔導術語，不說教
+3. 刪除多餘形容詞與贅字，避免過度鋪陳背景
+4. 內容自然貼近日常生活，避免過於書面化
+5. 在對方情緒低落時，語氣更緩，避免刺激
 
 # 修正方式
 - 如果語調太正式，改為自然口語
@@ -800,8 +805,6 @@ class MasterLLM:
 - 如果有說教傾向，改為陪伴式表達
 
 # 特殊情況處理
-- 危機狀況：提供緊急專線，如「119」或「1995」
-- 求助需求：簡單提供最相關的1-2個資源
 - 使用RAG檢索結果時，整理成簡潔易懂的格式
 
 # 當前情境
@@ -822,9 +825,7 @@ GPT-4o主要回答（請基於此回答進行角色化修飾）：
 當前時間：{current_time}
 
 # 注意事項
-• 不提供醫療診斷或法律建議  
-• 遇到緊急狀況，立即引導撥打緊急專線（如 119 或當地緊急服務電話）  
-• 保護個案隱私，不主動詢問過多個人資訊  
+• 不提供醫療診斷或法律建議   
 • 當提供資源資訊時，優先給 1–3 項最相關的重點，避免一次給太多
 
 # 範例修正
@@ -1064,43 +1065,33 @@ class UltimateWorkflow:
             # 記錄記憶載入
             ultimate_logger.log_stage_1_memory_loading(memory, memory_duration)
             
-            # Step 2: 生成GPT-4o主要回答（包含對話歷史）
-            primary_start = time.time()
-            primary_answer = await self.primary_response_generator.generate_primary_response(input_text, memory)
-            primary_duration = int((time.time() - primary_start) * 1000)
-            
-            state["primary_answer"] = primary_answer
-            
-            # 記錄主要回答
-            ultimate_logger.log_stage_2_reference_answer(primary_answer, primary_duration)
-            
-            # Step 3: 意圖分析
+            # Step 2: 意圖分析（提前執行以決定是否需要RAG）
             intent_start = time.time()
             intent_analysis = await self.intent_analyzer.analyze(input_text, memory)
             intent_duration = int((time.time() - intent_start) * 1000)
-            
+
             state["intent_analysis"] = intent_analysis
             state["risk_level"] = intent_analysis.get("risk_level", "none")
             state["intent"] = intent_analysis.get("intent", "一般對話")
-            
+
             # 記錄意圖分析
-            ultimate_logger.log_stage_3_intent_analysis(
+            ultimate_logger.log_stage_2_intent_analysis(
                 analysis=intent_analysis,
                 duration_ms=intent_duration,
                 error=intent_analysis.get("_error")
             )
-            
+
             ai_logger.log_semantic_analysis({
                 "user_intent": intent_analysis.get("intent"),
                 "emotional_state": intent_analysis.get("emotional_state"),
                 "risk_level": intent_analysis.get("risk_level"),
                 "need_knowledge": intent_analysis.get("need_rag")
             })
-            
-            # Step 4: 全面RAG檢索 + 智能關鍵詞提取
+
+            # Step 3: RAG檢索（提前執行以供GPT-4o參考）
             retrieved_knowledge = ""
             rag_results = []
-            
+
             # 一律執行RAG（除了純問候）
             if intent_analysis.get("intent") != "問候":
                 rag_start = time.time()
@@ -1126,7 +1117,7 @@ class UltimateWorkflow:
                     }]
                     ai_logger.log_retrieved_knowledge(rag_results)
                 
-                ultimate_logger.log_stage_4_smart_rag(
+                ultimate_logger.log_stage_3_smart_rag(
                     skipped=False,
                     query=input_text,
                     contextualized_query=contextualized_query,
@@ -1136,7 +1127,21 @@ class UltimateWorkflow:
                     duration_ms=rag_duration
                 )
             else:
-                ultimate_logger.log_stage_4_smart_rag(skipped=True)
+                ultimate_logger.log_stage_3_smart_rag(skipped=True)
+
+            # Step 4: 生成GPT-4o主要回答（現在包含RAG知識）
+            primary_start = time.time()
+            primary_answer = await self.primary_response_generator.generate_primary_response(
+                input_text,
+                memory,
+                retrieved_knowledge  # 新增：傳遞RAG檢索結果
+            )
+            primary_duration = int((time.time() - primary_start) * 1000)
+
+            state["primary_answer"] = primary_answer
+
+            # 記錄主要回答
+            ultimate_logger.log_stage_4_reference_answer(primary_answer, primary_duration, used_knowledge=bool(retrieved_knowledge))
             
             # Step 5: 生成最終回應
             llm_start = time.time()

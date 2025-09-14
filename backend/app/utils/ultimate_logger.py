@@ -90,27 +90,15 @@ class UltimateLogger:
                 self.logger.info(f"  {role}: {content}{'...' if len(msg.get('content', '')) > 50 else ''}")
         self.logger.info("")
     
-    def log_stage_2_reference_answer(self, reference: str, duration_ms: int):
-        """記錄階段2: GPT-4o參考回答"""
-        self.stage_times["reference_answer"] = duration_ms
-        
-        self.logger.info(f"🧠 階段2: GPT-4o參考回答 [{duration_ms}ms]")
-        self.logger.info(f"  系統提示: 簡單扼要地回答我就好")
-        if reference:
-            self.logger.info(f"  參考回答: {reference}")
-        else:
-            self.logger.info(f"  ⚠️ 未獲得參考回答")
-        self.logger.info("")
-    
-    def log_stage_3_intent_analysis(self, 
+    def log_stage_2_intent_analysis(self, 
                                    analysis: Dict[str, Any],
                                    duration_ms: int,
                                    raw_response: Optional[str] = None,
                                    error: Optional[str] = None):
-        """記錄階段3: IntentAnalyzer"""
+        """記錄階段2: IntentAnalyzer"""
         self.stage_times["intent_analysis"] = duration_ms
-        
-        self.logger.info(f"📊 階段3: 意圖分析 [{duration_ms}ms]")
+
+        self.logger.info(f"📊 階段2: 意圖分析 [{duration_ms}ms]")
         
         if error:
             self.logger.info(f"  ❌ 錯誤: {error}")
@@ -161,7 +149,7 @@ class UltimateLogger:
             self.logger.debug(f"  原始回應: {raw_response}")
         self.logger.info("")
     
-    def log_stage_4_smart_rag(self,
+    def log_stage_3_smart_rag(self,
                              skipped: bool = False,
                              query: Optional[str] = None,
                              contextualized_query: Optional[str] = None,
@@ -169,14 +157,14 @@ class UltimateLogger:
                              top_results: Optional[List[Dict]] = None,
                              formatted_knowledge: Optional[str] = None,
                              duration_ms: Optional[int] = None):
-        """記錄階段4: SmartRAG（條件性）"""
+        """記錄階段3: SmartRAG（條件性）"""
         if skipped:
-            self.logger.info("⏭️  階段4: RAG檢索 [跳過 - 純問候]")
+            self.logger.info("⏭️  階段3: RAG檢索 [跳過 - 純問候]")
             return
-        
+
         self.stage_times["rag_retrieval"] = duration_ms
-        
-        self.logger.info(f"🔍 階段4: RAG檢索 [{duration_ms}ms]")
+
+        self.logger.info(f"🔍 階段3: RAG檢索 [{duration_ms}ms]")
         if query != contextualized_query:
             self.logger.info(f"  原始查詢: {query}")
             self.logger.info(f"  語境化查詢: {contextualized_query}")
@@ -197,7 +185,21 @@ class UltimateLogger:
         else:
             self.logger.info("  ⚠️ 無有效檢索結果")
         self.logger.info("")
-    
+
+    def log_stage_4_reference_answer(self, reference: str, duration_ms: int, used_knowledge: bool = False):
+        """記錄階段4: GPT-4o參考回答（現在包含RAG知識）"""
+        self.stage_times["reference_answer"] = duration_ms
+
+        self.logger.info(f"🧠 階段4: GPT-4o參考回答 [{duration_ms}ms]")
+        self.logger.info(f"  系統提示: 簡單扼要地回答用戶")
+        if used_knowledge:
+            self.logger.info(f"  知識來源: 包含RAG檢索結果")
+        if reference:
+            self.logger.info(f"  參考回答: {reference}")
+        else:
+            self.logger.info(f"  ⚠️ 未獲得參考回答")
+        self.logger.info("")
+
     def log_stage_5_master_llm(self,
                               response: str,
                               response_type: str,

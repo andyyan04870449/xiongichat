@@ -3,7 +3,7 @@ import { CommandResponse } from '../types/message'
 
 export const ADDICTION_RESOURCES: Record<string, CommandResponse> = {
   // ============ 主選單 ============
-  '#戒癮資源': {
+  '#戒癮專區': {
     type: 'cards',
     content: '您好，今天想要了解什麼資訊呢？',
     cards: [

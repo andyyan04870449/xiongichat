@@ -508,7 +508,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       onNavigateToAssessment?.()
     } else if (serviceTitle === '資源表單') {
       setShowResourceForm(true)
-    } else if (serviceTitle === '衛教資源' || serviceTitle === '多元輔導' || serviceTitle === '扶助資源' || serviceTitle === '婦幼專區' || serviceTitle === '戒癮資源') {
+    } else if (serviceTitle === '衛教資源' || serviceTitle === '多元輔導' || serviceTitle === '扶助資源' || serviceTitle === '婦幼專區' || serviceTitle === '戒癮專區') {
       // 處理固定指令
       const command = `#${serviceTitle}`
       processCommandResponse(command)
