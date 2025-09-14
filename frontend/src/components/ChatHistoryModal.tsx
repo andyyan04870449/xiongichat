@@ -55,6 +55,7 @@ const generateConversationTitle = (startTime: Date): string => {
 export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
   // 狀態管理
   const [isSidebarOpen, setIsSidebarOpen] = useState(true) // 預設開啟側邊欄
+  const [isDesktop, setIsDesktop] = useState(false) // 判斷是否為電腦版
   const [chatHistories, setChatHistories] = useState<ChatHistory[]>([])
   const [selectedHistory, setSelectedHistory] = useState<ChatHistory | null>(null)
   const [selectedDetail, setSelectedDetail] = useState<ConversationDetail | null>(null)
@@ -124,6 +125,16 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
     setIsSidebarOpen(!isSidebarOpen)
   }
 
+  // 判斷是否為電腦版
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768) // md breakpoint
+    }
+    checkDesktop()
+    window.addEventListener('resize', checkDesktop)
+    return () => window.removeEventListener('resize', checkDesktop)
+  }, [])
+
   // 載入數據
   useEffect(() => {
     if (isOpen) {
@@ -143,6 +154,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
         <header className="flex-shrink-0 flex items-center justify-between px-4 py-3 border-b bg-white shadow-sm relative z-50">
           {/* 左側：歷史對話按鈕 */}
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             onClick={toggleSidebar}
@@ -154,6 +166,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
 
           {/* 右側：關閉按鈕 */}
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={handleClose}
@@ -163,16 +176,16 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
           </Button>
         </header>
 
-        {/* 主體內容區 */}
+        {/* 主體內容區 - 電腦版使用推擠佈局 */}
         <main className="flex-1 flex overflow-hidden relative">
 
           {/* 側邊欄遮罩（手機版） */}
-          {isSidebarOpen && (
+          {isSidebarOpen && !isDesktop && (
             <div
-              className="fixed inset-0 bg-black/30 z-40 md:hidden"
-              onClick={(e) => {
+              className="fixed inset-0 bg-black/30 md:hidden"
+              onClick={() => setIsSidebarOpen(false)}
+              onTouchEnd={(e) => {
                 e.preventDefault()
-                e.stopPropagation()
                 setIsSidebarOpen(false)
               }}
               style={{
@@ -181,35 +194,51 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                pointerEvents: 'auto'
+                zIndex: 40,
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'none'
               }}
             />
           )}
 
-          {/* 左側邊欄 */}
+          {/* 左側邊欄 - 電腦版推擠佈局，手機版覆蓋 */}
           <aside
-            className={`transform transition-transform duration-300 ease-in-out fixed md:relative z-50 md:z-0 w-80 h-full bg-gray-50 border-r border-gray-200 flex flex-col ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            className={`transition-all duration-300 ease-in-out ${
+              isDesktop
+                ? `${isSidebarOpen ? 'w-80' : 'w-0'} relative h-full bg-gray-50 border-r border-gray-200 flex flex-col overflow-hidden`
+                : `transform fixed w-80 h-full bg-gray-50 border-r border-gray-200 flex flex-col ${
+                    isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                  }`
             }`}
-            onClick={(e) => e.stopPropagation()}
             style={{
-              transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)'
+              zIndex: isDesktop ? 'auto' : 50,
+              WebkitTransform: !isDesktop ? (isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)') : undefined
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4 border-b bg-white flex items-center justify-between">
               <div>
                 <h2 className="font-semibold text-gray-800">對話紀錄</h2>
                 <p className="text-sm text-gray-500 mt-1">選擇要查看的對話</p>
               </div>
-              {/* 手機版關閉按鈕 */}
-              <Button
-                variant="ghost"
-                size="icon"
+              {/* 關閉按鈕 - 電腦版也顯示 */}
+              <button
+                type="button"
                 onClick={() => setIsSidebarOpen(false)}
-                className="md:hidden text-gray-500 hover:text-gray-700"
+                onTouchEnd={(e) => {
+                  e.preventDefault()
+                  setIsSidebarOpen(false)
+                }}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                title="關閉側邊欄"
+                style={{
+                  WebkitTapHighlightColor: 'transparent',
+                  touchAction: 'manipulation',
+                  cursor: 'pointer'
+                }}
               >
                 <X className="w-4 h-4" />
-              </Button>
+              </button>
             </div>
 
             {/* 對話列表區域 */}

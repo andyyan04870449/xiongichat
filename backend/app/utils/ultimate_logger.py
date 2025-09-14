@@ -186,21 +186,7 @@ class UltimateLogger:
             self.logger.info("  ⚠️ 無有效檢索結果")
         self.logger.info("")
 
-    def log_stage_4_reference_answer(self, reference: str, duration_ms: int, used_knowledge: bool = False):
-        """記錄階段4: GPT-4o參考回答（現在包含RAG知識）"""
-        self.stage_times["reference_answer"] = duration_ms
-
-        self.logger.info(f"🧠 階段4: GPT-4o參考回答 [{duration_ms}ms]")
-        self.logger.info(f"  系統提示: 簡單扼要地回答用戶")
-        if used_knowledge:
-            self.logger.info(f"  知識來源: 包含RAG檢索結果")
-        if reference:
-            self.logger.info(f"  參考回答: {reference}")
-        else:
-            self.logger.info(f"  ⚠️ 未獲得參考回答")
-        self.logger.info("")
-
-    def log_stage_5_master_llm(self,
+    def log_stage_4_master_llm(self,
                               response: str,
                               response_type: str,
                               length_limit: int,
@@ -212,18 +198,16 @@ class UltimateLogger:
                               prompt_tokens: Optional[int] = None,
                               completion_tokens: Optional[int] = None,
                               raw_response: Optional[str] = None):
-        """記錄階段5: MasterLLM最終回應生成"""
+        """記錄階段4: MasterLLM最終回應生成"""
         self.stage_times["master_llm"] = duration_ms
-        
-        self.logger.info(f"✨ 階段5: 最終回應生成 [{duration_ms}ms]")
+
+        self.logger.info(f"✨ 階段4: 最終回應生成 [{duration_ms}ms]")
         self.logger.info(f"  回應類型: {response_type}")
         
         # 資訊來源統計
         sources = []
         if has_memory:
             sources.append("記憶")
-        if used_reference:
-            sources.append("GPT-4o參考")
         if used_knowledge:
             sources.append("RAG知識")
         self.logger.info(f"  資訊來源: {' + '.join(sources) if sources else '無額外資訊'}")
@@ -254,16 +238,15 @@ class UltimateLogger:
         if error:
             self.logger.info(f"  ❌ 處理錯誤: {error}")
         
-        # 5階段耗時分析
+        # 4階段耗時分析
         stage_names = {
             "memory_loading": "記憶載入",
-            "reference_answer": "GPT-4o參考",
             "intent_analysis": "意圖分析",
             "rag_retrieval": "RAG檢索",
             "master_llm": "最終生成"
         }
-        
-        self.logger.info("⏱️  5階段耗時分析:")
+
+        self.logger.info("⏱️  4階段耗時分析:")
         total_stages_time = 0
         for stage_key, stage_name in stage_names.items():
             duration = self.stage_times.get(stage_key, 0)
