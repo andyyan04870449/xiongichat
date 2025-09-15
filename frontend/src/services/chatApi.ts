@@ -1,13 +1,29 @@
 // API 配置選項
 const API_ENDPOINTS = {
-  LOCAL: 'http://localhost:8001/api/v1',
-  NGROK_BACKEND: 'https://xiongichat-backend.ngrok.io/api/v1',
+  LOCAL: 'http://localhost:8002/api/v1', // 更新為實際的本地端口
+  NGROK_AI: 'https://xiongichat-ai.ngrok.io/api/v1', // AI 聊天伺服器
+  NGROK_BACKEND: 'https://xiongichat-backend.ngrok.io/api/v1', // 備用後端
   NGROK_LEGACY: 'https://xiongichat.ngrok.io/api/v1', // 保留舊的通道作為備用
   // 可以在這裡添加更多端點
 }
 
-// API 基礎設定 - 可以動態切換
-let API_BASE_URL = API_ENDPOINTS.LOCAL
+// 智能選擇初始端點：根據訪問來源自動選擇
+function getInitialEndpoint(): string {
+  const hostname = window.location.hostname
+
+  // 如果是 localhost 或 127.0.0.1，優先使用本地端點
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    console.log('🏠 檢測到本地環境，嘗試使用本地後端')
+    return API_ENDPOINTS.LOCAL
+  }
+
+  // 如果是其他域名（包括手機訪問），使用 AI ngrok 端點
+  console.log('🤖 檢測到遠端訪問，使用 AI 聊天伺服器')
+  return API_ENDPOINTS.NGROK_AI
+}
+
+// API 基礎設定 - 根據環境智能選擇
+let API_BASE_URL = getInitialEndpoint()
 
 // 開發模式切換器
 const isDevelopment = true // 設為 true 來使用本地API
@@ -356,14 +372,14 @@ async function testEndpointConnection(endpoint: string, silent = false): Promise
     if (!silent) console.log(`🔍 測試API端點: ${endpoint}`)
     // 設定短超時以快速檢測不可用的端點
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 3000) // 3秒超時
-    
+    const timeoutId = setTimeout(() => controller.abort(), 2000) // 縮短為2秒超時，加快切換速度
+
     const response = await fetch(`${endpoint}/chat`, {
       method: 'OPTIONS',
       mode: 'cors',
       signal: controller.signal
     })
-    
+
     clearTimeout(timeoutId)
     if (!silent) console.log(`✅ 端點 ${endpoint} 連接成功`)
     return true

@@ -202,8 +202,9 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
           setApiStatus('disconnected')
           console.log('📡 API服務不可用，將在需要時自動使用離線模式')
           console.log('💡 開發者工具:')
-          console.log('   window.switchApiEndpoint("NGROK")  // 切換到ngrok')
-          console.log('   window.switchApiEndpoint("LOCAL")  // 切換到localhost')
+          console.log('   window.switchApiEndpoint("NGROK_AI")       // 切換到AI聊天伺服器')
+          console.log('   window.switchApiEndpoint("NGROK_BACKEND")  // 切換到備用後端')
+          console.log('   window.switchApiEndpoint("LOCAL")          // 切換到localhost')
           console.log('   window.testAllEndpoints()          // 測試所有端點')
         }
       } catch (error) {

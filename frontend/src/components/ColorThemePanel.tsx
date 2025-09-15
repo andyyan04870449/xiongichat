@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Check, Palette } from 'lucide-react'
+import { X, Check, Palette, Layers, BookOpen } from 'lucide-react'
 import { useTheme } from './ThemeProvider'
 import '../styles/color-panel-scrollbar.css'
 
@@ -12,6 +12,16 @@ interface ColorThemePanelProps {
 export function ColorThemePanel({ isOpen, onClose }: ColorThemePanelProps) {
   const { currentScheme, setColorScheme, colorSchemes } = useTheme()
   const [selectedTheme, setSelectedTheme] = useState(currentScheme.name)
+  const [appTheme, setAppTheme] = useState<'basic' | 'notebook'>(() => {
+    return (localStorage.getItem('appTheme') as 'basic' | 'notebook') || 'basic'
+  })
+
+  // 保存應用主題到 localStorage
+  useEffect(() => {
+    localStorage.setItem('appTheme', appTheme)
+    // 發送自定義事件通知主題變更
+    window.dispatchEvent(new CustomEvent('appThemeChange', { detail: appTheme }))
+  }, [appTheme])
 
   useEffect(() => {
     setSelectedTheme(currentScheme.name)
@@ -140,7 +150,44 @@ export function ColorThemePanel({ isOpen, onClose }: ColorThemePanelProps) {
             scrollbarColor: '#94a3b8 #e2e8f0'
           }}
         >
+          {/* 應用主題切換區塊 */}
+          <div className="mb-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">應用主題</h3>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setAppTheme('basic')}
+                className={`
+                  flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 transition-all
+                  ${appTheme === 'basic'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                  }
+                `}
+              >
+                <Layers className="w-5 h-5 text-indigo-600" />
+                <span className="text-sm font-medium">基本</span>
+              </button>
+              <button
+                onClick={() => setAppTheme('notebook')}
+                disabled
+                className={`
+                  flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 transition-all opacity-50 cursor-not-allowed
+                  ${appTheme === 'notebook'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-200 bg-white'
+                  }
+                `}
+              >
+                <BookOpen className="w-5 h-5 text-gray-400" />
+                <span className="text-sm font-medium text-gray-400">筆記本</span>
+                <span className="text-xs text-gray-400">(開發中)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 顏色主題選擇 */}
           <div className="space-y-3 pb-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">顏色配置</h3>
             {colorSchemes.map((scheme, index) => (
               <button
                 key={scheme.name}
