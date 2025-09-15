@@ -56,7 +56,8 @@
       outDir: 'build',
     },
     server: {
-      port: 3000,
+      port: 8000,
+      strictPort: false, // 允許端口被佔用時自動切換
       open: true,
       host: true, // 允許外部訪問
       allowedHosts: [

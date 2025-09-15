@@ -1141,7 +1141,7 @@ class UltimateWorkflow:
             state["primary_answer"] = primary_answer
 
             # 記錄主要回答
-            ultimate_logger.log_stage_4_reference_answer(primary_answer, primary_duration, used_knowledge=bool(retrieved_knowledge))
+            ultimate_logger.log_debug("Primary Response", f"生成主要回答: {len(primary_answer)} 字元", {"content": primary_answer})
             
             # Step 5: 生成最終回應
             llm_start = time.time()
@@ -1161,7 +1161,7 @@ class UltimateWorkflow:
             # 記錄Master LLM階段
             response_type = intent_analysis.get("intent", "一般對話")
             
-            ultimate_logger.log_stage_5_master_llm(
+            ultimate_logger.log_stage_4_master_llm(
                 response=reply,
                 response_type=response_type,
                 length_limit=0,  # 不再限制字數

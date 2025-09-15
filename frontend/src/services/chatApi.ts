@@ -1,6 +1,6 @@
 // API 配置選項
 const API_ENDPOINTS = {
-  LOCAL: 'http://localhost:8000/api/v1',
+  LOCAL: 'http://localhost:8001/api/v1',
   NGROK_BACKEND: 'https://xiongichat-backend.ngrok.io/api/v1',
   NGROK_LEGACY: 'https://xiongichat.ngrok.io/api/v1', // 保留舊的通道作為備用
   // 可以在這裡添加更多端點
@@ -10,7 +10,7 @@ const API_ENDPOINTS = {
 let API_BASE_URL = API_ENDPOINTS.LOCAL
 
 // 開發模式切換器
-const isDevelopment = false // 設為 false 來強制使用真實API
+const isDevelopment = true // 設為 true 來使用本地API
 const useFallbackOnError = true // CORS錯誤時自動降級到Mock API
 const autoSwitchEndpoints = true // 自動嘗試不同端點
 
@@ -327,10 +327,9 @@ export async function getApiStatus(silent = false): Promise<{
 
 // 主要聊天函數 - 智能選擇API或Mock
 export async function sendChatMessageSmart(request: ChatRequest): Promise<ChatResponse> {
-  // 開發模式直接使用Mock
+  // 開發模式也嘗試真實API
   if (isDevelopment) {
-    console.log('🧪 開發模式：使用Mock API')
-    return await sendChatMessageMock(request)
+    console.log('🧪 開發模式：嘗試真實API')
   }
   
   // 生產模式嘗試真實API，失敗時可能降級
