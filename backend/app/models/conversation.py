@@ -9,6 +9,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.database import Base
+from app.utils.timezone import to_taiwan_time
 
 
 class Conversation(Base):
@@ -33,10 +34,10 @@ class Conversation(Base):
         return {
             "id": str(self.id),
             "user_id": self.user_id,
-            "started_at": self.started_at.isoformat() if self.started_at else None,
-            "ended_at": self.ended_at.isoformat() if self.ended_at else None,
-            "last_message_at": self.last_message_at.isoformat() if self.last_message_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "started_at": to_taiwan_time(self.started_at).isoformat() if self.started_at else None,
+            "ended_at": to_taiwan_time(self.ended_at).isoformat() if self.ended_at else None,
+            "last_message_at": to_taiwan_time(self.last_message_at).isoformat() if self.last_message_at else None,
+            "updated_at": to_taiwan_time(self.updated_at).isoformat() if self.updated_at else None,
         }
 
 
@@ -66,5 +67,5 @@ class ConversationMessage(Base):
             "role": self.role,
             "content": self.content,
             "meta": self.meta,  # JSON數據直接返回
-            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": to_taiwan_time(self.created_at).isoformat() if self.created_at else None,
         }

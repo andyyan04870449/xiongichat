@@ -1,7 +1,7 @@
 """聊天相關資料結構"""
 
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from uuid import UUID
 from pydantic import BaseModel, Field, validator
 
@@ -40,7 +40,10 @@ class ChatResponse(BaseModel):
     user_message_id: UUID = Field(..., description="使用者訊息ID")
     assistant_message_id: UUID = Field(..., description="助手訊息ID")
     reply: str = Field(..., description="回覆內容")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="時間戳")
+    timestamp: datetime = Field(
+        default_factory=lambda: datetime.now(timezone(timedelta(hours=8))),
+        description="時間戳（台灣時間）"
+    )
     
     class Config:
         json_schema_extra = {

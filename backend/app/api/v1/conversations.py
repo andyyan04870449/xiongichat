@@ -10,6 +10,7 @@ import logging
 from app.database import get_db
 from app.models import Conversation, ConversationMessage
 from app.schemas.conversation import ConversationResponse, MessageResponse
+from app.utils.timezone import to_taiwan_time
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -55,15 +56,15 @@ async def get_conversation(
         response = ConversationResponse(
             id=conversation.id,
             user_id=conversation.user_id,
-            started_at=conversation.started_at,
-            ended_at=conversation.ended_at,
-            last_message_at=conversation.last_message_at,
+            started_at=to_taiwan_time(conversation.started_at),
+            ended_at=to_taiwan_time(conversation.ended_at) if conversation.ended_at else None,
+            last_message_at=to_taiwan_time(conversation.last_message_at) if conversation.last_message_at else None,
             messages=[
                 MessageResponse(
                     id=msg.id,
                     role=msg.role,
                     content=msg.content,
-                    created_at=msg.created_at
+                    created_at=to_taiwan_time(msg.created_at)
                 )
                 for msg in messages
             ]
@@ -119,9 +120,9 @@ async def get_user_conversations(
                 ConversationResponse(
                     id=conv.id,
                     user_id=conv.user_id,
-                    started_at=conv.started_at,
-                    ended_at=conv.ended_at,
-                    last_message_at=conv.last_message_at,
+                    started_at=to_taiwan_time(conv.started_at),
+                    ended_at=to_taiwan_time(conv.ended_at) if conv.ended_at else None,
+                    last_message_at=to_taiwan_time(conv.last_message_at) if conv.last_message_at else None,
                     messages=[]  # 列表不包含訊息詳情
                 )
             )

@@ -18,6 +18,7 @@ import { COMMAND_RESPONSES, isValidCommand, getCommandResponse } from '../data/c
 import { SettingsDropdown } from './SettingsDropdown'
 import { RichTextRenderer } from './message/RichTextRenderer'
 import { ImageGallery } from './message/ImageGallery'
+import { getCurrentTaiwanTimeString, formatBackendTimestamp } from '../utils/dateUtils'
 import { InfoCardCarousel } from './message/InfoCardCarousel'
 
 // Use the imported Message type from types/message.ts
@@ -149,7 +150,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       id: 'welcome',
       sender: 'counselor',
       content: '您好！\n歡迎進來聊一聊，分享心情💕\n\n您可以放心聊天或詢問想知道的服務資訊📝\n也可以點選快速選單為您服務喔！\n\n在乎！守護！陪伴！我們一直都在❤️',
-      timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      timestamp: getCurrentTaiwanTimeString()
     }
   ])
 
@@ -380,7 +381,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       id: `user_${Date.now()}`,
       sender: 'user',
       content: messageText,
-      timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      timestamp: getCurrentTaiwanTimeString()
     }
 
     // 添加載入中的諮詢師訊息
@@ -388,7 +389,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       id: `loading_${Date.now()}`,
       sender: 'counselor',
       content: '',
-      timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: getCurrentTaiwanTimeString(),
       isLoading: true
     }
 
@@ -432,7 +433,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
           id: response.assistant_message_id,
           sender: 'counselor',
           content: response.reply,
-          timestamp: new Date(response.timestamp).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: formatBackendTimestamp(response.timestamp),
           isMockResponse
         }
         return [...withoutLoading, assistantMessage]
@@ -481,7 +482,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       id: `user_${Date.now()}`,
       sender: 'user',
       content: command,
-      timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      timestamp: getCurrentTaiwanTimeString()
     }
 
     // 建立機器人回應訊息
@@ -493,7 +494,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       images: response.images,
       cards: response.cards,
       richContent: response.richContent,
-      timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+      timestamp: getCurrentTaiwanTimeString()
     }
 
     setMessages(prev => [...prev, userMessage, botMessage])
@@ -522,14 +523,14 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
           id: `user_${Date.now()}`,
           sender: 'user',
           content: messageText,
-          timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+          timestamp: getCurrentTaiwanTimeString()
         }
 
         const loadingMessage: Message = {
           id: `loading_${Date.now()}`,
           sender: 'counselor',
           content: '',
-          timestamp: new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: getCurrentTaiwanTimeString(),
           isLoading: true
         }
 
@@ -565,7 +566,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
               id: response.assistant_message_id,
               sender: 'counselor',
               content: response.reply,
-              timestamp: new Date(response.timestamp).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }),
+              timestamp: formatBackendTimestamp(response.timestamp),
               isMockResponse
             }
             return [...withoutLoading, assistantMessage]

@@ -9,6 +9,7 @@ import logging
 # from app.langgraph import create_chat_workflow, WorkflowState
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.services.memory import MemoryService
+from app.utils.timezone import get_taiwan_time
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ class ChatService:
                 user_message_id=None,
                 assistant_message_id=None,
                 error=None,
-                timestamp=datetime.utcnow()
+                timestamp=get_taiwan_time()
             )
             
             # 執行工作流
@@ -88,7 +89,7 @@ class ChatService:
                 user_message_id=UUID(result["user_message_id"]) if result.get("user_message_id") else None,
                 assistant_message_id=UUID(result["assistant_message_id"]) if result.get("assistant_message_id") else None,
                 reply=result.get("reply", ""),
-                timestamp=result.get("timestamp", datetime.utcnow())
+                timestamp=result.get("timestamp", get_taiwan_time())
             )
             
             logger.info(f"Message processed successfully for user {request.user_id}")

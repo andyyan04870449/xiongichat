@@ -9,8 +9,22 @@ console.log('Loading app-simple.js...');
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing app...');
     
-    // API 基礎設置
-    const API_BASE = '/api/v1';
+    // API 基礎設置 - 智能選擇端點
+    const hostname = window.location.hostname;
+    let API_BASE = '/api/v1';
+
+    // 如果不是從 localhost 訪問，使用完整的 URL
+    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        // 使用公開的 ngrok AI 端點
+        API_BASE = 'https://xiongichat-ai.ngrok.io/api/v1';
+        console.log('使用遠端 API:', API_BASE);
+    } else if (window.location.port && window.location.port !== '8002') {
+        // 如果是 localhost 但端口不是 8002，使用完整 URL
+        API_BASE = 'http://localhost:8002/api/v1';
+        console.log('使用本地 API:', API_BASE);
+    } else {
+        console.log('使用相對 API 路徑:', API_BASE);
+    }
     
     // 當前頁面
     let currentPage = 'upload';

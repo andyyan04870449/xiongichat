@@ -2,13 +2,14 @@
 
 from typing import Dict, Any, List
 from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage, AIMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 from datetime import datetime
 import logging
 
 from app.config import settings
 from app.langgraph.state import WorkflowState
 from app.langgraph.prompts import CHAT_SYSTEM_PROMPT
+from app.utils.timezone import get_taiwan_time
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class ChatAgentNode:
             # 準備系統提示
             system_prompt = CHAT_SYSTEM_PROMPT.format(
                 user_id=state["user_id"],
-                timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                timestamp=get_taiwan_time().strftime("%Y-%m-%d %H:%M:%S")
             )
             
             # 如果有檢索到知識，加入到系統提示中

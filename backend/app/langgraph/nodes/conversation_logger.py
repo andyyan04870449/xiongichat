@@ -1,6 +1,6 @@
 """對話記錄節點"""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4, UUID
 import logging
 from typing import Optional
@@ -11,6 +11,7 @@ from sqlalchemy import select, update
 from app.models import Conversation, ConversationMessage
 from app.langgraph.state import WorkflowState
 from app.database import get_db_context
+from app.utils.timezone import get_taiwan_time
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class ConversationLoggerNode:
                 )
                 
                 # 儲存使用者訊息（使用稍微早一點的時間戳確保順序）
-                user_time = datetime.utcnow()
+                user_time = get_taiwan_time()
                 user_message = ConversationMessage(
                     conversation_id=conversation.id,
                     role="user",
@@ -57,11 +58,10 @@ class ConversationLoggerNode:
                     "used_knowledge": bool(state.get("knowledge", "")),
                     "used_reference": bool(state.get("reference_answer", "")),
                     "response_length": len(state.get("reply", "")),
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": get_taiwan_time().isoformat()
                 }
                 
                 # 儲存助手回覆（使用稍微晚一點的時間戳確保順序）
-                from datetime import timedelta
                 assistant_time = user_time + timedelta(microseconds=1)
                 assistant_message = ConversationMessage(
                     conversation_id=conversation.id,
@@ -75,7 +75,7 @@ class ConversationLoggerNode:
                 state["assistant_message_id"] = str(assistant_message.id)
                 
                 # 更新對話的最後訊息時間
-                conversation.last_message_at = datetime.utcnow()
+                conversation.last_message_at = get_taiwan_time()
                 
                 # 更新狀態中的 conversation_id
                 state["conversation_id"] = str(conversation.id)
@@ -126,18 +126,18 @@ class ConversationLoggerNode:
                 conversation = Conversation(
                     id=conversation_uuid,
                     user_id=user_id,
-                    started_at=datetime.utcnow(),
+                    started_at=get_taiwan_time(),
                 )
             except (ValueError, TypeError):
                 # 如果 conversation_id 格式不正確，創建新的
                 conversation = Conversation(
                     user_id=user_id,
-                    started_at=datetime.utcnow(),
+                    started_at=get_taiwan_time(),
                 )
         else:
             conversation = Conversation(
                 user_id=user_id,
-                started_at=datetime.utcnow(),
+                started_at=get_taiwan_time(),
             )
         
         db.add(conversation)

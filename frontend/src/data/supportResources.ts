@@ -431,7 +431,7 @@ export const SUPPORT_RESOURCES: Record<string, CommandResponse> = {
     `,
     images: [
       {
-        url: '/src/assets/gov_images/職得獎勵~就業支持方案.jpg',
+        url: '/src/assets/gov_images/職得獎勵~就業支持方案.png',
         alt: '職得獎勵~就業支持方案',
         caption: '職得獎勵，支持您的就業之路'
       }

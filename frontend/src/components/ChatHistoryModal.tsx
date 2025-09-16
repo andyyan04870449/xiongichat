@@ -14,6 +14,12 @@ import {
   type ConversationDetail,
   type ConversationMessage
 } from '../services/chatApi'
+import {
+  parseDateTime,
+  formatTaiwanTime,
+  formatTaiwanTimeOnly,
+  generateConversationTitle
+} from '../utils/dateUtils'
 
 interface ChatHistoryModalProps {
   isOpen: boolean
@@ -27,30 +33,6 @@ interface ChatHistory {
   lastUpdated: Date
 }
 
-// 工具函數
-const parseDateTime = (dateTimeString: string): Date => {
-  try {
-    const date = new Date(dateTimeString)
-    if (!isNaN(date.getTime())) return date
-    if (!dateTimeString.includes('Z') && !dateTimeString.includes('+')) {
-      return new Date(dateTimeString + 'Z')
-    }
-    return new Date()
-  } catch {
-    return new Date()
-  }
-}
-
-const generateConversationTitle = (startTime: Date): string => {
-  const now = new Date()
-  const daysDiff = Math.floor((now.getTime() - startTime.getTime()) / (1000 * 3600 * 24))
-  const timeStr = startTime.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
-
-  if (daysDiff === 0) return `今日諮詢 ${timeStr}`
-  if (daysDiff === 1) return `昨日諮詢 ${timeStr}`
-  if (daysDiff < 7) return `${daysDiff}天前諮詢`
-  return `諮詢記錄 ${startTime.toLocaleDateString('zh-TW', { month: '2-digit', day: '2-digit' })}`
-}
 
 export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
   // 狀態管理
@@ -62,6 +44,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isDetailLoading, setIsDetailLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
 
   // 載入對話記錄
   const loadHistories = async () => {
@@ -303,7 +286,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                               {history.title}
                             </h4>
                             <p className="text-xs text-gray-500">
-                              {history.startTime.toLocaleDateString('zh-TW', {
+                              {formatTaiwanTime(history.startTime, {
                                 month: '2-digit',
                                 day: '2-digit',
                                 hour: '2-digit',
@@ -311,7 +294,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                               })}
                             </p>
                             <p className="text-xs text-gray-400 truncate">
-                              最後更新: {history.lastUpdated.toLocaleString('zh-TW', {
+                              最後更新: {formatTaiwanTime(history.lastUpdated, {
                                 month: '2-digit',
                                 day: '2-digit',
                                 hour: '2-digit',
@@ -336,7 +319,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                 <div className="flex-shrink-0 p-4 border-b bg-white">
                   <h3 className="font-semibold text-gray-800">{selectedHistory.title}</h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    {selectedHistory.startTime.toLocaleString('zh-TW', {
+                    {formatTaiwanTime(selectedHistory.startTime, {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
@@ -409,10 +392,7 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                                   <div className={`text-xs mt-2 ${
                                     message.role === 'user' ? 'text-white/70' : 'text-gray-400'
                                   }`}>
-                                    {parseDateTime(message.created_at).toLocaleString('zh-TW', {
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    })}
+                                    {formatTaiwanTimeOnly(parseDateTime(message.created_at))}
                                   </div>
                                 </div>
                               </div>
