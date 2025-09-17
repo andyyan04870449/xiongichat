@@ -308,12 +308,6 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
 
   const serviceCards: ServiceCard[] = [
     {
-      title: '聊天吧',
-      description: '24小時線上諮詢服務',
-      icon: <MessageCircle className="w-6 h-6 md:w-8 md:h-8" />,
-      color: 'var(--theme-primary)'
-    },
-    {
       title: '衛教資源',
       description: '健康教育與防治資訊',
       icon: <BookOpen className="w-6 h-6 md:w-8 md:h-8" />,
@@ -505,7 +499,7 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
 
   const handleServiceClick = (serviceTitle: string) => {
     if (serviceTitle === '天燈Go') {
-      window.open('https://clock-arc-82195815.figma.site', '_blank')
+      window.open('https://lantern-demo.zeabur.app', '_blank')
     } else if (serviceTitle === '自我評量') {
       onNavigateToAssessment?.()
     } else if (serviceTitle === '資源表單') {
