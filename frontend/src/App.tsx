@@ -173,6 +173,19 @@ export default function App() {
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [debugMode, setDebugMode] = useState(false)
   const [userPassword, setUserPassword] = useState<string>('')
+  const [appTheme, setAppTheme] = useState<'basic' | 'notebook'>(() => {
+    return (localStorage.getItem('appTheme') as 'basic' | 'notebook') || 'notebook'
+  })
+
+  // 監聽 appTheme 變化
+  useEffect(() => {
+    const handleAppThemeChange = (event: CustomEvent) => {
+      setAppTheme(event.detail)
+    }
+
+    window.addEventListener('appThemeChange', handleAppThemeChange as EventListener)
+    return () => window.removeEventListener('appThemeChange', handleAppThemeChange as EventListener)
+  }, [])
 
   // F12 Debug模式切換
   useEffect(() => {
@@ -345,7 +358,7 @@ export default function App() {
       case 'login':
         return <LoginPage onLogin={handleLogin} />
       case 'chat':
-        return <ChatPage onLogout={handleLogout} onNavigateToAssessment={handleNavigateToAssessment} userPassword={userPassword} />
+        return <ChatPage onLogout={handleLogout} onNavigateToAssessment={handleNavigateToAssessment} userPassword={userPassword} appTheme={appTheme} />
       case 'assessment':
         return <AssessmentPage onBack={handleBackToChat} onStartAssessment={handleStartAssessment} />
       case 'assessment-detail':

@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "your-secret-key-here"
     jwt_algorithm: str = "HS256"
     jwt_expiration_hours: int = 24
+
+    # Google APIs
+    google_api_key: Optional[str] = None
     
     # CORS
     cors_origins: list = ["*"]

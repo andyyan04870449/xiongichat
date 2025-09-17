@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { X, Check, Palette, Layers, BookOpen } from 'lucide-react'
+import { X, Check, Palette, Layers, Moon } from 'lucide-react'
 import { useTheme } from './ThemeProvider'
 import '../styles/color-panel-scrollbar.css'
 
@@ -13,7 +13,7 @@ export function ColorThemePanel({ isOpen, onClose }: ColorThemePanelProps) {
   const { currentScheme, setColorScheme, colorSchemes } = useTheme()
   const [selectedTheme, setSelectedTheme] = useState(currentScheme.name)
   const [appTheme, setAppTheme] = useState<'basic' | 'notebook'>(() => {
-    return (localStorage.getItem('appTheme') as 'basic' | 'notebook') || 'basic'
+    return (localStorage.getItem('appTheme') as 'basic' | 'notebook') || 'notebook'
   })
 
   // 保存應用主題到 localStorage
@@ -169,18 +169,16 @@ export function ColorThemePanel({ isOpen, onClose }: ColorThemePanelProps) {
               </button>
               <button
                 onClick={() => setAppTheme('notebook')}
-                disabled
                 className={`
-                  flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 transition-all opacity-50 cursor-not-allowed
+                  flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg border-2 transition-all
                   ${appTheme === 'notebook'
                     ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-200 bg-white'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                   }
                 `}
               >
-                <BookOpen className="w-5 h-5 text-gray-400" />
-                <span className="text-sm font-medium text-gray-400">筆記本</span>
-                <span className="text-xs text-gray-400">(開發中)</span>
+                <Moon className="w-5 h-5 text-indigo-600" />
+                <span className="text-sm font-medium">夜燈熊</span>
               </button>
             </div>
           </div>

@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from "./ui/alert"
 import { ScrollArea } from "./ui/scroll-area"
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
 import chatbotAvatar from 'figma:asset/d2489a7281852ae82edf81f47c4ed2529464e955.png'
+import { RichTextRenderer } from './message/RichTextRenderer'
 import {
   getConversationHistory,
   getConversationDetail,
@@ -383,9 +384,14 @@ export function ChatHistoryModal({ isOpen, onClose }: ChatHistoryModalProps) {
                                   <div className={`text-sm md:text-base ${
                                     message.role === 'user' ? 'text-white' : 'text-gray-800'
                                   }`}>
-                                    <div className="whitespace-pre-wrap">
-                                      {message.content}
-                                    </div>
+                                    {/* 檢測是否包含HTML標籤 */}
+                                    {/<[^>]+>/.test(message.content) ? (
+                                      <RichTextRenderer content={message.content} />
+                                    ) : (
+                                      <div className="whitespace-pre-wrap">
+                                        {message.content}
+                                      </div>
+                                    )}
                                   </div>
 
                                   {/* Timestamp */}

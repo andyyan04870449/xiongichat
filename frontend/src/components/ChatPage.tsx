@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Send, Phone, Heart, BookOpen, Users, Calendar, MessageCircle, Flame, Shield, Baby, HandHeart, Menu, X, ClipboardList, AlertCircle, Loader2, WifiOff, AlertTriangle, History, FileText } from 'lucide-react'
 import { Button } from "./ui/button"
+// 匯入按鈕圖標
+import iconEducation from '../assets/btn_icon/衛教資源.png'
+import iconCounseling from '../assets/btn_icon/多元輔導.png'
+import iconSupport from '../assets/btn_icon/扶持資源.png'
+import iconWomenChildren from '../assets/btn_icon/婦幼專區.png'
+import iconAddiction from '../assets/btn_icon/戒癮專區.png'
+import iconAssessment from '../assets/btn_icon/自我評量.png'
+import iconResourceForm from '../assets/btn_icon/資源表單.png'
+import iconLantern from '../assets/btn_icon/天燈go.png'
 import { Input } from "./ui/input"
 import { Card } from "./ui/card"
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar"
@@ -35,6 +44,7 @@ interface ChatPageProps {
   onLogout: () => void
   onNavigateToAssessment?: () => void
   userPassword?: string
+  appTheme?: 'basic' | 'notebook'
 }
 
 // Markdown渲染組件
@@ -144,7 +154,7 @@ function MarkdownRenderer({ content }: { content: string }) {
   return <div className="markdown-content">{parseMarkdown(content)}</div>
 }
 
-export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: ChatPageProps) {
+export function ChatPage({ onLogout, onNavigateToAssessment, userPassword, appTheme = 'basic' }: ChatPageProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -310,49 +320,65 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
     {
       title: '衛教資源',
       description: '健康教育與防治資訊',
-      icon: <BookOpen className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconEducation} alt="衛教資源" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <BookOpen className="w-6 h-6 md:w-8 md:h-8" />,
       color: 'var(--theme-secondary)'
     },
     {
       title: '多元輔導',
       description: '專業諮詢與心理支持',
-      icon: <Users className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconCounseling} alt="多元輔導" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <Users className="w-6 h-6 md:w-8 md:h-8" />,
       color: 'var(--theme-accent)'
     },
     {
       title: '扶助資源',
       description: '社會資源與協助服務',
-      icon: <HandHeart className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconSupport} alt="扶助資源" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <HandHeart className="w-6 h-6 md:w-8 md:h-8" />,
       color: '#10b981'
     },
     {
       title: '婦幼專區',
       description: '婦女兒童專屬服務',
-      icon: <Baby className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconWomenChildren} alt="婦幼專區" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <Baby className="w-6 h-6 md:w-8 md:h-8" />,
       color: '#f43f5e'
     },
     {
       title: '戒癮專區',
       description: '戒毒康復專業服務',
-      icon: <Shield className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconAddiction} alt="戒癮專區" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <Shield className="w-6 h-6 md:w-8 md:h-8" />,
       color: '#ef4444'
     },
     {
       title: '自我評量',
       description: '專業評估與自我檢測',
-      icon: <ClipboardList className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconAssessment} alt="自我評量" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <ClipboardList className="w-6 h-6 md:w-8 md:h-8" />,
       color: '#8b5cf6'
     },
     {
       title: '資源表單',
       description: '申請表格與文件下載',
-      icon: <FileText className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconResourceForm} alt="資源表單" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <FileText className="w-6 h-6 md:w-8 md:h-8" />,
       color: '#06b6d4'
     },
     {
       title: '天燈Go',
       description: '心靈療癒與希望寄託',
-      icon: <Flame className="w-6 h-6 md:w-8 md:h-8" />,
+      icon: appTheme === 'notebook'
+        ? <img src={iconLantern} alt="天燈Go" className="w-10 h-10 md:w-12 md:h-12 object-contain" />
+        : <Flame className="w-6 h-6 md:w-8 md:h-8" />,
       color: 'var(--theme-primary)'
     }
   ]
@@ -423,10 +449,16 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
       // 移除載入訊息並添加真實回覆
       setMessages(prev => {
         const withoutLoading = prev.filter(msg => msg.id !== loadingMessage.id)
+
+        // 檢測是否包含HTML標籤
+        const hasHtmlTags = /<[^>]+>/.test(response.reply)
+
         const assistantMessage: Message = {
           id: response.assistant_message_id,
           sender: 'counselor',
           content: response.reply,
+          contentType: hasHtmlTags ? 'rich-text' : 'text',
+          richContent: hasHtmlTags ? response.reply : undefined,
           timestamp: formatBackendTimestamp(response.timestamp),
           isMockResponse
         }
@@ -726,12 +758,20 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
                   onClick={() => handleServiceClick(service.title)}
                 >
                   <div className="flex items-center space-x-3 w-full">
-                    <div 
-                      className="text-white p-2 rounded-lg flex-shrink-0"
-                      style={{ backgroundColor: service.color }}
-                    >
-                      {service.icon}
-                    </div>
+                    {appTheme === 'notebook' ? (
+                      // 夜燈熊模式：圖標直接顯示
+                      <div className="flex-shrink-0">
+                        {service.icon}
+                      </div>
+                    ) : (
+                      // 基本模式：圖標在色塊內
+                      <div
+                        className="text-white p-2 rounded-lg flex-shrink-0"
+                        style={{ backgroundColor: service.color }}
+                      >
+                        {service.icon}
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-gray-800 truncate">{service.title}</h3>
                       <p className="text-sm text-gray-600 truncate">{service.description}</p>
@@ -987,12 +1027,20 @@ export function ChatPage({ onLogout, onNavigateToAssessment, userPassword }: Cha
                     onClick={() => handleServiceClick(service.title)}
                   >
                     <div className="flex items-center space-x-3">
-                      <div 
-                        className="text-white p-2 rounded-lg flex-shrink-0"
-                        style={{ backgroundColor: service.color }}
-                      >
-                        {React.cloneElement(service.icon as React.ReactElement, { className: "w-5 h-5" })}
-                      </div>
+                      {appTheme === 'notebook' ? (
+                        // 夜燈熊模式：圖標直接顯示
+                        <div className="flex-shrink-0">
+                          {service.icon}
+                        </div>
+                      ) : (
+                        // 基本模式：圖標在色塊內
+                        <div
+                          className="text-white p-2 rounded-lg flex-shrink-0 flex items-center justify-center"
+                          style={{ backgroundColor: service.color }}
+                        >
+                          {service.icon}
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-gray-800 text-sm truncate">{service.title}</h3>
                         <p className="text-xs text-gray-600 truncate">{service.description}</p>

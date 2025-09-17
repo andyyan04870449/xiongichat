@@ -10,11 +10,13 @@ import os
 
 class UltimateLogger:
     """極簡工作流的專用日誌記錄器
-    
-    記錄3個階段的詳細資訊：
-    1. IntentAnalyzer - 意圖分析
-    2. SmartRAG - 智能檢索（條件性）
-    3. MasterLLM - 最終生成
+
+    記錄4個主要階段的詳細資訊：
+    1. 記憶載入 - 載入對話歷史
+    2. IntentAnalyzer - 意圖分析與實體識別
+    3. Places API - Google地圖資訊查詢（條件性）
+    4. SmartRAG - 智能檢索（條件性）
+    5. MasterLLM - 最終生成
     """
     
     def __init__(self, session_id: str):
@@ -68,7 +70,7 @@ class UltimateLogger:
         
         # 記錄請求開始
         self.logger.info("="*80)
-        self.logger.info(f"[{self.log_data['timestamp']}] 🚀 UltimateWorkflow 新請求 (5步驟)")
+        self.logger.info(f"[{self.log_data['timestamp']}] 🚀 UltimateWorkflow 新請求 (4步驟架構)")
         self.logger.info(f"Session: {self.session_id}")
         self.logger.info(f"用戶: {user_id}")
         self.logger.info(f"訊息: {message}")
@@ -138,18 +140,67 @@ class UltimateLogger:
             entities = analysis.get('entities', {})
             if entities:
                 self.logger.info(f"  實體識別:")
+                if entities.get('institutions'):
+                    self.logger.info(f"    機構: {entities['institutions']}")
                 if entities.get('substances'):
                     self.logger.info(f"    物質: {entities['substances']}")
                 if entities.get('locations'):
                     self.logger.info(f"    地點: {entities['locations']}")
                 if entities.get('symptoms'):
                     self.logger.info(f"    症狀: {entities['symptoms']}")
+
+            # Places API 需求判斷
+            if analysis.get('need_places_api'):
+                place_entity = analysis.get('place_entity', '')
+                query_type = analysis.get('place_query_type', 'general')
+                self.logger.info(f"  📍 需要Places API: 是")
+                self.logger.info(f"    目標實體: {place_entity}")
+                self.logger.info(f"    查詢類型: {query_type}")
+            else:
+                self.logger.info(f"  📍 需要Places API: 否")
         
         if raw_response and len(raw_response) < 500:
             self.logger.debug(f"  原始回應: {raw_response}")
         self.logger.info("")
     
-    def log_stage_3_smart_rag(self,
+    def log_stage_3_places_api(self,
+                              skipped: bool = False,
+                              query_entity: Optional[str] = None,
+                              query_type: Optional[str] = None,
+                              result: Optional[Dict] = None,
+                              duration_ms: Optional[int] = None,
+                              error: Optional[str] = None):
+        """記錄階段3: Places API查詢"""
+        if skipped:
+            self.logger.info("⏭️  階段3: Places API [跳過 - 無需查詢]")
+            return
+
+        self.stage_times["places_api"] = duration_ms
+
+        self.logger.info(f"📍 階段3: Places API查詢 [{duration_ms}ms]")
+        self.logger.info(f"  查詢實體: {query_entity}")
+        self.logger.info(f"  查詢類型: {query_type}")
+
+        if error:
+            self.logger.info(f"  ❌ 查詢錯誤: {error}")
+        elif result:
+            self.logger.info(f"  ✅ 查詢成功:")
+            if result.get('name'):
+                self.logger.info(f"    名稱: {result['name']}")
+            if result.get('phone'):
+                self.logger.info(f"    電話: {result['phone']}")
+            if result.get('address'):
+                self.logger.info(f"    地址: {result['address']}")
+            if result.get('opening_hours'):
+                hours = result['opening_hours'][:100]
+                self.logger.info(f"    營業時間: {hours}{'...' if len(result['opening_hours']) > 100 else ''}")
+            if result.get('website'):
+                self.logger.info(f"    網站: {result['website']}")
+        else:
+            self.logger.info(f"  ⚠️ 未找到地點資訊")
+        self.logger.info("")
+
+    def log_stage_4_smart_rag(self,
                              skipped: bool = False,
                              query: Optional[str] = None,
                              contextualized_query: Optional[str] = None,
@@ -159,12 +210,12 @@ class UltimateLogger:
                              duration_ms: Optional[int] = None):
         """記錄階段3: SmartRAG（條件性）"""
         if skipped:
-            self.logger.info("⏭️  階段3: RAG檢索 [跳過 - 純問候]")
+            self.logger.info("⏭️  階段4: RAG檢索 [跳過 - 純問候]")
             return
 
         self.stage_times["rag_retrieval"] = duration_ms
 
-        self.logger.info(f"🔍 階段3: RAG檢索 [{duration_ms}ms]")
+        self.logger.info(f"🔍 階段4: RAG檢索 [{duration_ms}ms]")
         if query != contextualized_query:
             self.logger.info(f"  原始查詢: {query}")
             self.logger.info(f"  語境化查詢: {contextualized_query}")
@@ -186,7 +237,7 @@ class UltimateLogger:
             self.logger.info("  ⚠️ 無有效檢索結果")
         self.logger.info("")
 
-    def log_stage_4_master_llm(self,
+    def log_stage_5_master_llm(self,
                               response: str,
                               response_type: str,
                               length_limit: int,
@@ -198,10 +249,10 @@ class UltimateLogger:
                               prompt_tokens: Optional[int] = None,
                               completion_tokens: Optional[int] = None,
                               raw_response: Optional[str] = None):
-        """記錄階段4: MasterLLM最終回應生成"""
+        """記錄階段5: MasterLLM最終回應生成"""
         self.stage_times["master_llm"] = duration_ms
 
-        self.logger.info(f"✨ 階段4: 最終回應生成 [{duration_ms}ms]")
+        self.logger.info(f"✨ 階段5: 最終回應生成 [{duration_ms}ms]")
         self.logger.info(f"  回應類型: {response_type}")
         
         # 資訊來源統計
@@ -238,15 +289,16 @@ class UltimateLogger:
         if error:
             self.logger.info(f"  ❌ 處理錯誤: {error}")
         
-        # 4階段耗時分析
+        # 5階段耗時分析
         stage_names = {
             "memory_loading": "記憶載入",
             "intent_analysis": "意圖分析",
+            "places_api": "Places API",
             "rag_retrieval": "RAG檢索",
             "master_llm": "最終生成"
         }
 
-        self.logger.info("⏱️  4階段耗時分析:")
+        self.logger.info("⏱️  5階段耗時分析:")
         total_stages_time = 0
         for stage_key, stage_name in stage_names.items():
             duration = self.stage_times.get(stage_key, 0)

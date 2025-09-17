@@ -22,6 +22,7 @@ from app.utils.quality_logger import get_quality_logger
 from app.langgraph.nodes.conversation_logger import ConversationLoggerNode
 from app.services.enhanced_memory import EnhancedMemoryService
 from app.langgraph.intent_cleaner import IntentCleaner
+from app.services.google_places_service import GooglePlacesService
 
 logger = logging.getLogger(__name__)
 
@@ -79,8 +80,19 @@ class IntentAnalyzer:
 
 **need_rag: false 所有其他情況**：
 - 純情緒表達或危機狀態
-- 一般對話或問候  
+- 一般對話或問候
 - 已在進行情緒支持對話中
+
+# Google Places API觸發條件
+**need_places_api: true 當符合以下條件**：
+- 明確詢問特定機構的電話、地址、營業時間
+- 提到具體的機構名稱（如：高雄市毒品防制局、某某醫院）
+- 詢問「在哪裡」、「怎麼去」、「聯絡方式」等
+
+**place_query_info 判斷邏輯**：
+- query_type: 根據關鍵詞判斷（電話→phone, 地址/在哪→address, 營業時間→hours）
+- place_name: 從用戶輸入中提取可能的機構名稱
+- confidence: 根據關鍵詞明確程度給出信心分數
 
 # 關懷策略升級機制
 根據對話歷史評估AI關懷策略的有效性並決定升級：
@@ -133,13 +145,24 @@ class IntentAnalyzer:
 分析：明確自傷意圖
 輸出：risk_level="medium", intent="危機"
 
+# 實體識別
+**重要**：從用戶輸入中準確提取機構/地點名稱
+- 移除查詢詞（如「的電話」、「在哪裡」、「怎麼去」、「營業時間」）
+- 只保留純粹的機構名稱
+- 例如：「凱旋醫院在哪裡？」→ 實體為「凱旋醫院」
+- 例如：「高雄市毒品防制局的電話」→ 實體為「高雄市毒品防制局」
+
 # 返回格式
 {{
     "risk_level": "none/low/medium/high",
     "intent": "問候/求助/諮詢/危機/情緒支持/一般對話",
     "need_rag": true/false,
+    "need_places_api": true/false,
+    "place_entity": "提取的機構名稱（純淨）",
+    "place_query_type": "phone/address/hours/general",
     "search_keywords": ["關鍵詞1", "關鍵詞2"],
     "entities": {{
+        "institutions": ["提到的機構/醫院"],
         "substances": ["提到的毒品"],
         "locations": ["提到的地點"],
         "symptoms": ["提到的症狀"]
@@ -319,46 +342,61 @@ class IntentAnalyzer:
 
     async def analyze(self, input_text: str, memory: List[Dict] = None) -> Dict:
         """分析用戶意圖"""
-        
+
         # 檢查快取
         cache_key = f"intent:{input_text[:50]}"
         if cache_key in self.cache:
             logger.info(f"Intent cache hit for: {input_text[:30]}")
             return self.cache[cache_key]
-        
+
         try:
+            # 使用PlaceQueryDetector檢測地點查詢
+            from app.services.google_places_service import PlaceQueryDetector
+            place_detection = PlaceQueryDetector.detect_place_query(input_text)
+
             # 格式化記憶
             memory_str = self._format_memory(memory) if memory else "無"
-            
+
             # 構建提示
             prompt = self.ANALYSIS_PROMPT.format(
                 input_text=input_text,
                 memory=memory_str
             )
-            
+
             messages = [
                 SystemMessage(content="你是專業的對話分析系統，只返回JSON格式結果。"),
                 HumanMessage(content=prompt)
             ]
-            
+
             # 執行分析
             response = await self.llm.ainvoke(messages)
-            
+
             # 解析結果 - 增強JSON處理
             try:
                 result = self._parse_json_response(response.content)
                 if result:
+                    # 使用LLM返回的實體和查詢類型
+                    if not result.get("place_entity"):
+                        # 如果LLM沒有提取實體，使用PlaceQueryDetector作為備份
+                        result["place_entity"] = place_detection.get("place_name", "")
+
+                    if not result.get("place_query_type"):
+                        result["place_query_type"] = place_detection.get("query_type", "general")
+
+                    # 根據是否有實體來決定是否需要Places API
+                    result["need_places_api"] = bool(result.get("place_entity"))
+
                     # 進行策略歷史分析和升級決策
                     history_analysis = self._analyze_strategy_history(memory)
                     upgrade_decision = self._determine_upgrade_strategy(result, history_analysis)
-                    
+
                     # 整合升級決策到結果中
                     result.update(upgrade_decision)
                     result.update(history_analysis)
-                    
+
                     # 加入快取
                     self.cache[cache_key] = result
-                    logger.info(f"[Intent Analysis] ✅ 成功解析 - risk={result.get('risk_level')}, intent={result.get('intent')}, stage={result.get('care_stage_needed')}")
+                    logger.info(f"[Intent Analysis] ✅ 成功解析 - risk={result.get('risk_level')}, intent={result.get('intent')}, stage={result.get('care_stage_needed')}, places_api={result.get('need_places_api')}")
                     logger.debug(f"[Intent Analysis] 完整結果: {json.dumps(result, ensure_ascii=False, indent=2)}")
                     return result
                 else:
@@ -550,6 +588,10 @@ class IntentAnalyzer:
     
     def _get_default_analysis(self, text: str) -> Dict:
         """預設分析結果（容錯用）"""
+        # 使用PlaceQueryDetector檢測地點查詢
+        from app.services.google_places_service import PlaceQueryDetector
+        place_detection = PlaceQueryDetector.detect_place_query(text)
+
         # 擴充的危機關鍵詞庫
         high_risk_keywords = [
             "自殺", "想死", "死了", "活不下去", "解脫", "結束",
@@ -559,14 +601,14 @@ class IntentAnalyzer:
             "永遠睡", "不要醒", "最後一", "不用擔心我",
             "想好要怎麼做", "今晚過後", "跟家人說", "對不起"
         ]
-        
+
         medium_risk_keywords = [
             "痛苦", "絕望", "崩潰", "受不了", "好累", "好苦",
             "遺言", "交代"
         ]
-        
+
         help_keywords = ["戒毒", "戒癮", "治療", "機構", "哪裡", "電話", "地址", "毒防局"]
-        
+
         # 判斷風險等級
         if any(kw in text for kw in high_risk_keywords):
             risk_level = "high"
@@ -577,14 +619,14 @@ class IntentAnalyzer:
         else:
             risk_level = "none"
             intent = "一般對話"
-        
+
         # 檢查是否為諮詢
         if any(kw in text for kw in ["電話", "地址", "毒防局", "哪裡", "怎麼去", "在哪"]):
             intent = "諮詢"
             need_rag = True
         else:
             need_rag = any(kw in text for kw in help_keywords)
-        
+
         # 決定關懷階段
         if risk_level == "high":
             care_stage = 1  # 高風險時優先情感確認
@@ -598,11 +640,17 @@ class IntentAnalyzer:
         else:
             care_stage = 2  # 一般情況使用第二層
             care_reason = "一般對話，提供適度支持"
-        
+
         return {
             "risk_level": risk_level,
             "intent": intent,
             "need_rag": need_rag,
+            "need_places_api": place_detection["is_place_query"],
+            "place_query_info": {
+                "query_type": place_detection["query_type"],
+                "place_name": place_detection["place_name"],
+                "confidence": place_detection["confidence"]
+            },
             "search_keywords": [text],
             "entities": {},
             "emotional_state": "絕望" if risk_level == "high" else "不明",
@@ -779,8 +827,13 @@ class PrimaryResponseGenerator:
 class MasterLLM:
     """角色化修飾器 - 基於GPT-4o回答進行雄i聊角色修飾"""
     
-    MASTER_PROMPT = """你是「雄i聊」，高雄市毒品防制局的關懷聊天機器人。
+    MASTER_PROMPT = """你是「雄i聊」，高雄市毒品防制局的關懷聊天機器人，也是個管員最好的AI助手。
 
+# [重要] 資訊提供原則：
+# - 如果檢索到的知識包含【Google地圖資訊】，這是可信的資料，請直接提供給用戶
+# - 如果檢索到的知識包含【知識庫資訊】，這是可信的資料，請直接提供給用戶
+# - 只有在完全沒有檢索到任何資訊時，才告知用戶可以上網查詢或洽詢相關單位
+#
 # 任務：修正GPT-4o的回答，確保符合雄i聊角色設定
 
 # 角色設定
@@ -807,6 +860,54 @@ class MasterLLM:
 # 特殊情況處理
 - 使用RAG檢索結果時，整理成簡潔易懂的格式
 
+# 重複內容檢查與避免
+**重要**：避免重複提供相同的機構資訊
+- 仔細檢查對話歷史，如果最近2-3輪對話已經提供某機構的完整資訊（電話、地址、網站），不要再次重複
+- 當用戶重複詢問已提供的資訊時，採用以下策略：
+  1. 確認理解：「剛剛提供的[機構名]資訊有幫助嗎？需要其他協助嗎？」
+  2. 深化討論：「除了聯繫[機構名]，你現在的感受如何？」
+  3. 提供新資源：「除了[機構名]，也可以考慮...」（提供不同的資源）
+  4. 關注用戶：轉向關心用戶本身的需求或感受
+
+## 判斷是否重複的標準
+- 如果對話歷史中最近3輪內出現過相同機構的電話號碼
+- 如果用戶連續詢問相同或類似問題
+- 如果回應內容與前1-2次回應高度相似
+
+## 重複時的回應原則
+- 不要機械式重複相同資訊
+- 表現出記得之前的對話
+- 推進對話深度，而非停留原地
+
+# 文字格式化規則
+**重要**：請使用HTML格式輸出，讓前端正確顯示：
+
+## 超連結格式
+- 網址必須使用HTML格式：<a href="網址">顯示文字</a>
+- 範例：<a href="https://example.com">點擊查看網站</a>
+- 電話號碼使用tel連結：<a href="tel:0712334567">07 123 4567</a>
+
+## 文字排版格式
+- 重點強調：使用 <strong>文字</strong> 或 <b>文字</b> 表示粗體
+- 換行：使用 <br> 標籤換行
+- 段落：使用 <p>段落內容</p> 包裹段落
+- 項目列表：使用 • 符號開頭，每項結尾加 <br>
+
+## 資訊整理格式
+當提供機構資訊時，使用清晰的HTML格式：
+<strong>機構名稱</strong><br>
+📍 地址：xxx<br>
+📞 電話：<a href="tel:純數字">顯示號碼</a><br>
+🕐 營業時間：xxx<br>
+🔗 網站：<a href="網址">點擊前往</a>
+
+## 範例格式化
+原始：高雄市毒防局電話07 211 1311，網站https://dsacp.kcg.gov.tw/
+格式化：
+<strong>高雄市毒品防制局</strong><br>
+📞 電話：<a href="tel:072111311">07 211 1311</a><br>
+🔗 網站：<a href="https://dsacp.kcg.gov.tw/">官方網站</a>
+
 # 當前情境
 用戶訊息：{user_message}
 
@@ -816,11 +917,11 @@ class MasterLLM:
 檢索到的知識（完全依賴這些資訊）：
 {retrieved_knowledge}
 
-GPT-4o主要回答（請基於此回答進行角色化修飾）：
-{primary_answer}
 
-對話歷史：
+對話歷史（請仔細檢查避免重複）：
 {memory}
+
+**重要提醒**：請仔細檢查上述對話歷史，如果已經提供過某機構的資訊，不要重複提供相同內容。
 
 當前時間：{current_time}
 
@@ -1001,19 +1102,19 @@ class UltimateWorkflow:
     """極簡工作流 - 3步驟架構"""
     
     def __init__(self):
-        self.primary_response_generator = PrimaryResponseGenerator()  # 主要回答生成器
         self.intent_analyzer = IntentAnalyzer()
         self.smart_rag = SmartRAG()
         self.master_llm = MasterLLM()
         self.conversation_logger = ConversationLoggerNode()  # 新增對話記錄器
-        
+        self.places_service = GooglePlacesService()  # 新增Google Places服務
+
         # 記憶管理
         self.memory_cache = {}  # 簡單記憶體快取
-        
+
         # 回應快取
         self.response_cache = TTLCache(maxsize=100, ttl=300)
-        
-        logger.info("UltimateWorkflow initialized - 5-step architecture with GPT-4o reference")
+
+        logger.info("UltimateWorkflow initialized - Streamlined 4-step architecture with Places API")
     
     async def ainvoke(self, state: WorkflowState) -> WorkflowState:
         """執行工作流"""
@@ -1088,7 +1189,47 @@ class UltimateWorkflow:
                 "need_knowledge": intent_analysis.get("need_rag")
             })
 
-            # Step 3: RAG檢索（提前執行以供GPT-4o參考）
+            # Step 3: Google Places API查詢（如果需要）
+            places_info = ""
+            if intent_analysis.get("need_places_api"):
+                places_start = time.time()
+                # 使用LLM識別的實體
+                place_entity = intent_analysis.get("place_entity", "")
+
+                if not place_entity:
+                    # 備用：從原始輸入清理出機構名稱
+                    import re
+                    place_entity = re.sub(r'(的電話|在哪裡|在哪|怎麼去|地址|營業時間|幾點)', '', input_text).strip()
+
+                logger.info(f"[Places API] 查詢地點：{place_entity}")
+
+                try:
+                    place_result = await self.places_service.search_place(place_entity)
+                    if place_result:
+                        places_info = self.places_service.format_for_response(place_result)
+                        logger.info(f"[Places API] ✅ 找到地點資訊：{places_info[:100]}")
+                    else:
+                        logger.warning(f"[Places API] ❌ 未找到地點：{place_entity}")
+                except Exception as e:
+                    logger.error(f"[Places API] 查詢錯誤：{str(e)}")
+                    places_error = str(e)
+
+                places_duration = int((time.time() - places_start) * 1000)
+                logger.info(f"[Places API] 查詢耗時：{places_duration}ms")
+
+                # 記錄到 ultimate_logger
+                ultimate_logger.log_stage_3_places_api(
+                    skipped=False,
+                    query_entity=place_entity,
+                    query_type=intent_analysis.get('place_query_type', 'general'),
+                    result=place_result if 'place_result' in locals() else None,
+                    duration_ms=places_duration,
+                    error=places_error if 'places_error' in locals() else None
+                )
+            else:
+                ultimate_logger.log_stage_3_places_api(skipped=True)
+
+            # Step 4: RAG檢索（提前執行以供GPT-4o參考）
             retrieved_knowledge = ""
             rag_results = []
 
@@ -1117,7 +1258,7 @@ class UltimateWorkflow:
                     }]
                     ai_logger.log_retrieved_knowledge(rag_results)
                 
-                ultimate_logger.log_stage_3_smart_rag(
+                ultimate_logger.log_stage_4_smart_rag(
                     skipped=False,
                     query=input_text,
                     contextualized_query=contextualized_query,
@@ -1127,29 +1268,27 @@ class UltimateWorkflow:
                     duration_ms=rag_duration
                 )
             else:
-                ultimate_logger.log_stage_3_smart_rag(skipped=True)
+                ultimate_logger.log_stage_4_smart_rag(skipped=True)
 
-            # Step 4: 生成GPT-4o主要回答（現在包含RAG知識）
-            primary_start = time.time()
-            primary_answer = await self.primary_response_generator.generate_primary_response(
-                input_text,
-                memory,
-                retrieved_knowledge  # 新增：傳遞RAG檢索結果
-            )
-            primary_duration = int((time.time() - primary_start) * 1000)
-
-            state["primary_answer"] = primary_answer
-
-            # 記錄主要回答
-            ultimate_logger.log_debug("Primary Response", f"生成主要回答: {len(primary_answer)} 字元", {"content": primary_answer})
+            # Step 4: 跳過Primary Response，直接生成最終回應
             
-            # Step 5: 生成最終回應
+            # Step 4: 生成最終回應（整合所有資訊）
             llm_start = time.time()
+
+            # 合併知識來源：RAG和Places API
+            combined_knowledge = ""
+            if retrieved_knowledge and places_info:
+                combined_knowledge = f"【知識庫資訊】\n{retrieved_knowledge}\n\n【Google地圖資訊】\n{places_info}"
+            elif retrieved_knowledge:
+                combined_knowledge = retrieved_knowledge
+            elif places_info:
+                combined_knowledge = f"【Google地圖資訊】\n{places_info}"
+
             reply = await self.master_llm.generate(
                 user_message=input_text,
                 intent_analysis=intent_analysis,
-                retrieved_knowledge=retrieved_knowledge,
-                primary_answer=state.get("primary_answer", ""),
+                retrieved_knowledge=combined_knowledge,
+                primary_answer="",  # 不再使用Primary Response
                 memory=memory,
                 conversation_id=state.get("conversation_id")
             )
@@ -1161,7 +1300,7 @@ class UltimateWorkflow:
             # 記錄Master LLM階段
             response_type = intent_analysis.get("intent", "一般對話")
             
-            ultimate_logger.log_stage_4_master_llm(
+            ultimate_logger.log_stage_5_master_llm(
                 response=reply,
                 response_type=response_type,
                 length_limit=0,  # 不再限制字數
